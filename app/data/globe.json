@@ -1,0 +1,22 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "TGO",
+      "properties": { "name": "Togo" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [0.21389, 6.14472],
+            [1.64417, 6.14472],
+            [1.64417, 11.12167],
+            [0.21389, 11.12167],
+            [0.21389, 6.14472]
+          ]
+        ]
+      }
+    }
+  ]
+}

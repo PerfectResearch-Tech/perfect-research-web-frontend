@@ -1,0 +1,70 @@
+/* ------------------------------------------------------------------------
+
+  Auth Page
+
+------------------------------------------------------------------------*/
+
+.auth-page {
+  background: url("/assets/images/webp/full-bg.webp") no-repeat center center;
+  background-size: cover;
+  /* min-height: 100vh; */
+  width: 100%;
+}
+
+.auth-height {
+  background: linear-gradient(#fd476e56, #fd476e2f);
+}
+
+.auth-page-all-items {
+  /* background: linear-gradient(#ff7b0046, #ff7b0030); */
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+.step-one {
+  /* display: flex; */
+  /* align-items: center; */
+  background: linear-gradient(#fd476e56, #fd476e2f);
+  /* height: 110vh; */
+}
+
+.step-twoo {
+  background: linear-gradient(#ff7b0062, #ff7b0073);
+}
+
+.step-three {
+  background: linear-gradient(#000000a7, #66666677);
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--primary-radius);
+}
+
+.auth-input {
+  border: none;
+  border-bottom: none;
+  background-color: var(--grey);
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  border-radius: var(--primary-radius);
+  width: 100%;
+}
+
+/* 
+.auth-input {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid #fff;
+  color: #fff;
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+} */
