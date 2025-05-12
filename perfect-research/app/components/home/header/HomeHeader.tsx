@@ -49,7 +49,8 @@ function HomeHeader() {
       <div className="hidden md:flex flex-row items-center justify-between home-menu">
         <span
           className="bg-slate-600 rounded-lg"
-          style={{ height: 50, width: 50 }}
+          style={{ height: 1150, width: 1000 }}
+          
         ></span>
 
         <ul className="flex flex-row items-center home-menu-center-items px-4 py-3">

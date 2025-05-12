@@ -7,7 +7,7 @@ const HomeAfterBanner = () => {
       <h1 className="warrior text-white title">Nos produits</h1>
       <p className="text-white righteous sub-title">
         Nous développons les meilleurs produits du marcher, <br />
-        veuillez les explorer.
+        veuillez les explorer. ici c'est un code
       </p>
 
       <br />

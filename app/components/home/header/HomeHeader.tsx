@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import React, { useState, useEffect } from "react";
+import Image from 'next/image';
 
 function HomeHeader() {
   const [isOpen, setIsOpen] = useState(false); // Pour le dropdown Products
@@ -46,18 +47,24 @@ function HomeHeader() {
   return (
     <header className="my-4">
       {/* Menu principal (Desktop) */}
-      <div className="hidden md:flex flex-row items-center justify-between home-menu">
-        <span
-          className="bg-slate-600 rounded-lg"
-          style={{ height: 50, width: 50 }}
-        ></span>
+      <div className="hidden md:flex items-center justify-between w-full max-w-7xl mx-auto px-4 py-4">
+        <div className="flex-shrink-0 w-[150px]">
+          <Image
+            src="/assets/images/png/Plan de travail 1 copie.png"
+            alt="Logo"
+            width={150}
+            height={150}
+            className="object-contain"
+            
+          />
+        </div>
 
         <ul className="flex flex-row items-center home-menu-center-items px-4 py-3">
           <li className="mx-4">
             <button
               onClick={toggleDropdown}
               id="dropdownHoverButton"
-              className="text-dark focus:ring-4 focus:outline-none font-medium rounded-lg text-sm inline-flex items-center"
+              className="text-dark focus:ring-4 focus:outline-none bold rounded-lg text-sm inline-flex items-center"
               type="button"
             >
               Products
@@ -103,21 +110,21 @@ function HomeHeader() {
             )}
           </li>
 
-          <li className="mx-4">
+          <li className="mx-4 ">
             <Link href="/doc">
-              <span>Doc</span>
+              <span className="bold">Doc</span>
             </Link>
           </li>
 
           <li className="mx-4">
             <Link href="#contact">
-              <span>Contact</span>
+              <span className="bold">Contact</span>
             </Link>
           </li>
 
           <li className="mx-4">
             <Link href="#donation">
-              <span>Faire un don</span>
+              <span className="bold">Faire un don</span>
             </Link>
           </li>
         </ul>

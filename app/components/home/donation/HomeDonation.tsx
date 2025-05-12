@@ -31,7 +31,7 @@ export const HomeDonation = () => {
   };
 
   return (
-    <div id="webcrumbs" className="w-full flex justify-center">
+    <div id="webcrumbs" className="w-full flex justify-center bg-sky-500 bg-[url('/file2.svg')]">
       <motion.section
         initial="hidden"
         whileInView="visible"
@@ -42,15 +42,18 @@ export const HomeDonation = () => {
         className="w-full bg-gradient-to-br from-[var(--tertiary-color)] to-[var(--secondary-color)] relative overflow-hidden py-12 sm:py-20 px-6 sm:px-16 shadow-2xl"
         style={{ fontFamily: "var(--font-primary)" }}
       >
+
+
+
         {/* Background SVG */}
-        <div className="absolute inset-0 opacity-20">
+        <div className="absolute inset-0 opacity-20 after-banner">
           <div className="absolute w-full h-full">
             <svg
               className="w-full h-full"
               viewBox="0 0 696 316"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
-            >
+            />
               <path
                 d="M-380 -189C-380 -189 -312 216 152 343C616 470 684 875 684 875"
                 stroke="url(https://webcrumbs.cloud/placeholder)"
@@ -112,9 +115,11 @@ export const HomeDonation = () => {
                   </linearGradient>
                 ))}
               </defs>
-            </svg>
+            {/* </svg> */}
           </div>
         </div>
+
+        
 
         <div className="relative z-10">
           {/* Titre et Sous-titre */}
@@ -130,9 +135,9 @@ export const HomeDonation = () => {
             </motion.h1>
             <motion.p
               whileHover={{ scale: 1.02 }}
-              className="sub-title text-lg sm:text-xl text-[var(--grey)] tracking-wide hover:text-[var(--white)] transition-colors duration-300"
+              className="sub-title ligth sm:text-xl text-[var(--grey)] tracking-wide hover:text-[var(--white)] transition-colors duration-300"
             >
-              Faites un don pour encourager la communauté
+              Faites un don pour encourager la communauté .
             </motion.p>
           </motion.div>
 
@@ -273,7 +278,7 @@ export const HomeDonation = () => {
               <motion.button
                 whileHover={{ scale: 1.05, y: -5 }}
                 whileTap={{ scale: 0.95 }}
-                className="w-full py-4 px-6 bg-gradient-to-r from-[var(--tertiary-color)] to-[var(--secondary-color)] text-[var(--white)] font-bold rounded-[var(--primary-radius)] shadow-lg transition-all duration-500 hover:shadow-[var(--tertiary-color)]/25 hover:shadow-xl"
+                className="btn btn-primary w-full"
               >
                 Donner
               </motion.button>
@@ -287,147 +292,3 @@ export const HomeDonation = () => {
 
 export default HomeDonation;
 
-// "use client"; // Ajoute cette ligne en haut du fichier
-
-// import React, { useState } from "react";
-
-// const HomeDonation = () => {
-//   const [showCustomAmount, setShowCustomAmount] = useState(false);
-
-//   const handlePersonalizeClick = () => {
-//     setShowCustomAmount(!showCustomAmount);
-//   };
-
-//   return (
-//     <section className="home-donation py-20 px-16" id="donation">
-//       <div className="head-items">
-//         <h1 className="warrior title">Soutenez la communaute</h1>
-//         <p className=" righteous sub-title">
-//           Faites un don pour encourager la communauté
-//         </p>
-//       </div>
-
-//       <br />
-//       <br />
-//       <br />
-//       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 align-middle">
-//         <div className="flex items-center justify-center">
-//           <img
-//             src="assets/gifs/vecteezy-cartoon-world-revolve-unscreen.gif"
-//             alt="Cartoon World Revolve"
-//             className="hover:scale-105 transition-all duration-300"
-//           />
-//         </div>
-
-//         <div className="flex items-center justify-center">
-//           <div>
-//             <h1 className="warrior">Choisir un montant a donner</h1>
-//             <div className="grid grid-cols-3 gap-4">
-//               <label className="cursor-pointer">
-//                 <input
-//                   type="radio"
-//                   name="amount"
-//                   value="10"
-//                   id="amount-10"
-//                   className="hidden"
-//                 />
-//                 <div className="px-4 py-3 bg-white border border-gray-300 rounded-lg text-center text-gray-700 font-medium hover:bg-blue-50 hover:border-blue-500 transition-all duration-300 peer-checked:bg-blue-100 peer-checked:border-blue-500">
-//                   $10
-//                 </div>
-//               </label>
-//               <label className="cursor-pointer">
-//                 <input
-//                   type="radio"
-//                   name="amount"
-//                   value="20"
-//                   id="amount-20"
-//                   className="hidden"
-//                 />
-//                 <div className="px-4 py-3 bg-white border border-gray-300 rounded-lg text-center text-gray-700 font-medium hover:bg-blue-50 hover:border-blue-500 transition-all duration-300 peer-checked:bg-blue-100 peer-checked:border-blue-500">
-//                   $20
-//                 </div>
-//               </label>
-//               <label className="cursor-pointer">
-//                 <input
-//                   type="radio"
-//                   name="amount"
-//                   value="30"
-//                   id="amount-30"
-//                   className="hidden"
-//                 />
-//                 <div className="px-4 py-3 bg-white border border-gray-300 rounded-lg text-center text-gray-700 font-medium hover:bg-blue-50 hover:border-blue-500 transition-all duration-300 peer-checked:bg-blue-100 peer-checked:border-blue-500">
-//                   $30
-//                 </div>
-//               </label>
-//             </div>
-//             <br />
-//             <p
-//               onClick={handlePersonalizeClick}
-//               className="text-blue-500 cursor-pointer hover:underline transition-all duration-300"
-//             >
-//               Personnaliser le montant
-//             </p>
-
-//             {showCustomAmount && (
-//               <div className="mt-4">
-//                 <label
-//                   htmlFor="custom-amount"
-//                   className="block hover:text-blue-500 transition-colors duration-300"
-//                 >
-//                   Entrez un montant personnalisé
-//                 </label>
-//                 <input
-//                   type="number"
-//                   id="custom-amount"
-//                   name="custom-amount"
-//                   className="border border-gray-300 p-2 w-full mt-2 focus:ring-2 focus:ring-blue-500 transition-all duration-300"
-//                   placeholder="Montant"
-//                 />
-//               </div>
-//             )}
-
-//             <br />
-//             <br />
-//             <br />
-//             <p className="hover:text-blue-500 transition-colors duration-300">
-//               Choisir une fréquence de versement
-//             </p>
-
-//             <form>
-//               <div className="flex flex-row gap-5">
-//                 <div className="btn bg-white w-full">
-//                   <input type="radio" name="amount" value="0" id="monthly" />
-//                   <label
-//                     htmlFor="monthly"
-//                     className="px-4 py-2 hover:text-white transition-all duration-300 text-center"
-//                   >
-//                     Mensuel
-//                   </label>
-//                 </div>
-//                 <div className="btn bg-white w-full">
-//                   <input type="radio" name="amount" value="1" id="yearly" />
-//                   <label
-//                     htmlFor="yearly"
-//                     className="px-4 py-2 hover:text-white transition-all duration-300 text-center"
-//                   >
-//                     Annuel
-//                   </label>
-//                 </div>
-//               </div>
-//             </form>
-
-//             <br />
-//             <br />
-//             <br />
-
-//             <button className="btn btn-primary w-full hover:bg-blue-600 hover:scale-105 transition-all duration-300">
-//               Donner
-//             </button>
-//           </div>
-//         </div>
-//       </div>
-//     </section>
-//   );
-// };
-
-// export default HomeDonation;

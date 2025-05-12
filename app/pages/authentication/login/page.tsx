@@ -107,7 +107,7 @@ const Login = () => {
   return (
     <div className="auth-page min-h-screen flex flex-col">
       <Toaster richColors position="top-right" />
-      <div className="auth-height flex flex-col min-h-screen w-full">
+      <div className="bg-sky-500 flex flex-col min-h-screen w-full bg-[url('/file2.svg')]">
         <div className="auth-page-all-items px-4 md:px-28 py-10 flex-grow grid grid-cols-1 md:grid-cols-[repeat(auto-fit,minmax(300px,1fr))] h-full gap-6">
           {/* Image masquée sur mobile (sm et en dessous) */}
           <div className="text-center hidden md:block">
@@ -123,11 +123,19 @@ const Login = () => {
           <div className="bg-white auth-form px-4 md:px-10 flex flex-col items-center justify-center">
             <br />
             <br />
-            <span className="h-24 w-24 bg-gray-200"></span>
+            <div className="">
+              <Image
+                src="/assets/images/png/Plan de travail 1.png"
+                alt="logo"
+                width={150}
+                height={150}
+                className="object-contain"
+              />
+            </div>
 
             <br />
 
-            <h2 className="righteous sub-title text-center">
+            <h2 className="black sub-title text-center">
               Connectez-vous à votre compte
             </h2>
             <br />
@@ -135,7 +143,7 @@ const Login = () => {
             <form>
               <label
                 htmlFor="email"
-                className={fieldErrors.email ? "text-red-500" : ""}
+                className={fieldErrors.email ?  "text-red-500" : "" }
               >
                 Email
               </label>
@@ -143,9 +151,9 @@ const Login = () => {
                 type="email"
                 placeholder="Votre Email ici..."
                 id="email"
-                className={`auth-input ${
+                className={`auth-input regular  bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 text-gray-700 font-medium ${
                   fieldErrors.email ? "border-red-500" : ""
-                }`}
+                }` }
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
@@ -159,18 +167,18 @@ const Login = () => {
                 type="password"
                 placeholder="Votre mot de passe ici..."
                 id="password"
-                className={`auth-input ${
+                className={`auth-input regular  bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 text-gray-700 font-medium ${
                   fieldErrors.password ? "border-red-500" : ""
                 }`}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
 
-              <p className="text-center">
+              <p className="text-center regular">
                 Mot de passe oublié ?{" "}
                 <Link
                   href="/pages/authentication/forgotten-password/otp"
-                  className="text-blue-600"
+                  className=" text-[var(--secondary-color)]"
                 >
                   Récupérer
                 </Link>
@@ -188,7 +196,7 @@ const Login = () => {
 
             <br />
 
-            <p className="text-center">
+            <p className="text-center regular">
               Vous n'avez pas de compte ?{" "}
               <Link
                 href="/pages/authentication/registration"
@@ -205,7 +213,7 @@ const Login = () => {
             <div>
               <button className="w-full flex items-center justify-center gap-3 px-6 py-3 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 text-gray-700 font-medium">
                 <Image
-                  src="/assets/icons/google.png"
+                  src="/assets/images/png/google.png"
                   alt="Google Icon"
                   width={24}
                   height={24}
