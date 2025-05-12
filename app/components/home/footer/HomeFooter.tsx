@@ -4,8 +4,8 @@ import { FaLinkedin, FaFacebook, FaTiktok } from "react-icons/fa";
 
 const HomeFooter = () => {
   return (
-    <footer className="footer py-10 px-4 sm:px-8 md:px-16 transition-all duration-300">
-      <div className="footer-items grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto text-gray-700">
+    <footer className="py-10 px-4 sm:px-8 md:px-16 transition-all duration-300 bg-white bg-[url('/file2.svg')]">
+      <div className="footer-items grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto text-gray-700  ">
         {/* Section Description */}
         <div className="relative p-4 rounded-lg border border-gray-700 hover:border-[var(--secondary-color)] transition-all duration-300 group">
           <h1 className="text-2xl font-bold hover:text-[var(--secondary-color)] transition-colors duration-300 relative z-10">

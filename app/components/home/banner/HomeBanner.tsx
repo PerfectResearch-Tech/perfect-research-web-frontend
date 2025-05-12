@@ -4,40 +4,49 @@ import Link from "next/link";
 
 const HomeBanner = () => {
   return (
-    <section className="home-banner">
+    <section className="relative min-h-screen overflow-hidden">
       {/* Vidéo de fond */}
-      <div className="video-background">
-        <video autoPlay loop muted className="video">
+      <div className="absolute inset-0 z-0">
+        <video 
+          autoPlay 
+          loop 
+          muted 
+          className="w-full h-full object-cover"
+        >
           <source src="assets/videos/banner-bg-video.mp4" type="video/mp4" />
           Votre navigateur ne prend pas en charge la balise vidéo.
         </video>
       </div>
 
-      {/* Contenu principal */}
-      <div className="mx-6 banner-content">
-        {/* HomeHeader en haut, non affecté par le centrage */}
-        <HomeHeader />
+      {/* Contenu superposé */}
+      <div className="relative z-10 flex flex-col min-h-screen">
+        {/* Header en haut */}
+        <div className="flex-none">
+          <HomeHeader />
+        </div>
 
-        {/* Contenu centré */}
-        <div className="flex items-center justify-center h-screen">
-          <div className="text-center">
-            <h1 className="righteous text-white title anim-title">
+        {/* Contenu principal centré */}
+        <div className="flex-grow flex flex-col items-center justify-center px-4">
+          <div className="w-full max-w-4xl text-center space-y-8">
+            <h1 className="text-5xl md:text-6xl black text-white animate-fade-in">
               Perfect Research
             </h1>
-            <p className="text-white sub-title anim-sub-title">
-              L’IA qui vous aide à rédiger vos thèses et vos mémoires
+            
+            <p className="regular md:text-2xl text-white opacity-90 animate-fade-in delay-100">
+              L'IA qui vous aide à rédiger vos thèses et vos mémoires
             </p>
 
-            <br />
-            <br />
-
-            <div className="flex flex-row justify-around">
-              <Link href={"pages/perfect/chat"}>
-                <button className="btn btn-primary">Découvrir</button>
+            <div className="flex flex-col sm:flex-row justify-center gap-4 mt-8 animate-fade-in delay-200">
+              <Link href="pages/perfect/chat">
+                <button className="btn btn-primary px-8 py-3 text-lg">
+                  Découvrir
+                </button>
               </Link>
-
-              <Link href={"pages/perfect/research"}>
-                <button className="btn gb-grey">Chercher un document</button>
+              
+              <Link href="pages/perfect/research">
+                <button className="btn btn-secondary px-8 py-3 text-lg">
+                  Chercher un document
+                </button>
               </Link>
             </div>
           </div>

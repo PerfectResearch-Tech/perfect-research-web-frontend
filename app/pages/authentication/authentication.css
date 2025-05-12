@@ -10,10 +10,10 @@
   /* min-height: 100vh; */
   width: 100%;
 }
-
+/* 
 .auth-height {
   background: linear-gradient(#fd476e56, #fd476e2f);
-}
+} */
 
 .auth-page-all-items {
   /* background: linear-gradient(#ff7b0046, #ff7b0030); */
@@ -48,14 +48,15 @@
 }
 
 .auth-input {
-  border: none;
-  border-bottom: none;
+  /* border: none; */
+border-color: #32a1ce;
+   border-bottom: none;
   background-color: var(--grey);
   font-size: 1.2rem;
   margin-bottom: 1rem;
   padding: 0.5rem;
   border-radius: var(--primary-radius);
-  width: 100%;
+   width: 100%; 
 }
 
 /* 

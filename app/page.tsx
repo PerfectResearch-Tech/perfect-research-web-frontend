@@ -14,12 +14,16 @@ export default function Home() {
 
       <div className="full-bg">
         <HomeAfterBanner />
-        <HomeContact />
+       <HomeContact />
         <HomeDonation />
+   <HomeFooter />
+         
+        
+        
         <br />
       </div>
       <br />
-      <HomeFooter />
+   
     </div>
   );
 }

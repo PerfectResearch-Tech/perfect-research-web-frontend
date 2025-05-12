@@ -25,7 +25,7 @@ const HomeBanner = () => {
               Perfect Research
             </h1>
             <p className="text-white sub-title anim-sub-title">
-              L’IA qui vous aide à rédiger vos thèses et vos mémoires
+              L’IA qui vous aide à rédiger vos thèses et vos mémoires hj;iiomomm
             </p>
 
             <br />
