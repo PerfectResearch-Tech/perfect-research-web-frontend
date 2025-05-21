@@ -112,12 +112,12 @@ const page = () => {
   };
 
   return (
-    <div className="auth-page min-h-screen flex flex-col">
+    <div className="auth-page min-h-screen flex flex-col ">
       <Toaster richColors position="top-right" />
-      <div className="step-one flex flex-col min-h-screen w-full">
-        <div className="auth-page-all-items px-4 md:px-28 py-10 flex-grow grid grid-cols-1 md:grid-cols-[repeat(auto-fit,minmax(300px,1fr))] h-full gap-6">
+      <div className="bg-sky-500 step-one bg-[url('/file2.svg')] flex flex-col min-h-screen w-full items-center justify-center">
+        <div className="auth-page-all-items px-4 md:px-28 py-10 flex-grow grid grid-cols-1 md:grid-cols-[repeat(auto-fit,minmax(300px,1fr))] h-full gap-6 ">
           {/* Image masquée sur mobile (sm et en dessous) */}
-          <div className="text-center hidden md:block">
+          {/* <div className="text-center hidden md:block">
             <Image
               src="/assets/images/svg/onboarding-first-step.svg"
               alt="image"
@@ -125,19 +125,27 @@ const page = () => {
               height={400}
               layout="contain"
             />
-          </div>
+          </div> */}
 
           <div className="bg-white auth-form px-4 md:px-10 max-w-full flex flex-col items-center justify-center">
             <div className="w-full bg-gray-200 h-2 mb-6">
-              <div className="bg-blue-500 h-2" style={{ width: "33%" }}></div>
+              <div className="bg-orange-500 h-2" style={{ width: "33%" }}></div>
             </div>
             <br />
             <br />
-            <span className="h-24 w-24 bg-gray-200 inline-block"></span>
+            <span className="inline-block">
+              <Image
+                src="/assets/images/png/Plan de travail 1.png"
+                alt="logo"
+                width={150}
+                height={150}
+                className="object-contain"
+              />
+            </span>
             <br />
 
-            <h2 className="righteous sub-title text-center">
-              Dites-nous un peu qui vous êtes
+            <h2 className="regular sub-title text-center">
+              Dites-nous un peu qui vous êtes 
             </h2>
             <br />
             <br />
@@ -155,11 +163,10 @@ const page = () => {
                   onChange={() => handleSelection("etudiant")}
                 />
                 <div
-                  className={`w-40 p-4 border rounded-lg text-center transition-all duration-300 ${
-                    selectedOption === "etudiant"
+                  className={`w-40 p-4 border rounded-lg text-center transition-all duration-300 ${selectedOption === "etudiant"
                       ? "bg-blue-500 text-white"
                       : "bg-gray-200 text-gray-700"
-                  }`}
+                    }`}
                 >
                   <p className="font-semibold">Étudiant</p>
                 </div>
@@ -176,11 +183,10 @@ const page = () => {
                   onChange={() => handleSelection("chercheur")}
                 />
                 <div
-                  className={`w-40 p-4 border rounded-lg text-center transition-all duration-300 ${
-                    selectedOption === "chercheur"
+                  className={`w-40 p-4 border rounded-lg text-center transition-all duration-300 ${selectedOption === "chercheur"
                       ? "bg-blue-500 text-white"
                       : "bg-gray-200 text-gray-700"
-                  }`}
+                    }`}
                 >
                   <p className="font-semibold">Chercheur</p>
                 </div>
@@ -197,11 +203,10 @@ const page = () => {
                   onChange={() => handleSelection("universite")}
                 />
                 <div
-                  className={`w-40 p-4 border rounded-lg text-center transition-all duration-300 ${
-                    selectedOption === "universite"
+                  className={`w-40 p-4 border rounded-lg text-center transition-all duration-300 ${selectedOption === "universite"
                       ? "bg-blue-500 text-white"
                       : "bg-gray-200 text-gray-700"
-                  }`}
+                    }`}
                 >
                   <p className="font-semibold">Université</p>
                 </div>
@@ -218,11 +223,10 @@ const page = () => {
                   onChange={() => handleSelection("simple_curieux")}
                 />
                 <div
-                  className={`w-40 p-4 border rounded-lg text-center transition-all duration-300 ${
-                    selectedOption === "simple_curieux"
+                  className={`w-40 p-4 border rounded-lg text-center transition-all duration-300 ${selectedOption === "simple_curieux"
                       ? "bg-blue-500 text-white"
                       : "bg-gray-200 text-gray-700"
-                  }`}
+                    }`}
                 >
                   <p className="font-semibold">Simple Curieux</p>
                 </div>
@@ -236,9 +240,8 @@ const page = () => {
             <div className="flex justify-center">
               <p
                 onClick={() => handleSelection("autre")}
-                className={`cursor-pointer ${
-                  selectedOption === "autre" ? "text-blue-500" : "text-gray-700"
-                }`}
+                className={`cursor-pointer ${selectedOption === "autre" ? "text-blue-500" : "text-gray-700"
+                  }`}
               >
                 Autre
               </p>
@@ -257,15 +260,14 @@ const page = () => {
                 <button
                   onClick={handleNext}
                   disabled={!selectedOption}
-                  className={`px-6 py-2 rounded-lg transition-all duration-300 ${
-                    selectedOption
-                      ? "bg-blue-500 text-white hover:bg-blue-600"
+                  className={`px-6 py-2 rounded-lg transition-all duration-300 ${selectedOption
+                      ? "btn btn-primary text-white "
                       : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                  }`}
+                    }`}
                 >
                   <span>
                     {selectedOption === "etudiant" ||
-                    selectedOption === "universite"
+                      selectedOption === "universite"
                       ? "Suivant"
                       : "Soumettre"}
                   </span>

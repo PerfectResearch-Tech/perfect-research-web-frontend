@@ -83,95 +83,108 @@ const Login = () => {
   };
 
   return (
-    <div className="auth-page">
+    <div className="bg-sky-500 bg-[url('/file2.svg')] min-h-screen flex flex-col">
       <Toaster richColors position="top-right" />
-      <div className="auth-height">
-        <div className="auth-page-all-items px-28 py-10">
-          <div className="text-center">
-            <Image
-              src="/assets/images/svg/register-img.svg"
-              alt="image"
-              width={400}
-              height={400}
-              layout="contain"
-            />
-          </div>
+      <div className="auth-height flex flex-col min-h-screen w-full justify-center items-center">
+        <div className="auth-page-all-items px-4 md:px-28 py-10 flex-grow grid grid-cols-1 md:grid-cols-[repeat(auto-fit,minmax(300px,1fr))] h-full gap-6">
+          {/* <div className="auth-page-all-items px-28 py-10" > */}
 
-          <div className="bg-white auth-form px-10">
-            <br />
-            <br />
-            <span className="h-24 w-24 bg-gray-200"></span>
-
-            <br />
-
-            <h2 className="righteous sub-title text-center">
-              Veuillez renseigner votre nouveau mot de passe.
-            </h2>
-            <br />
-            <form>
-              <label
-                htmlFor="password"
-                className={fieldErrors.password ? "text-red-500" : ""}
-              >
-                Mot de passe
-              </label>
-              <input
-                type="password"
-                placeholder="Votre nouveau mot de passe ici..."
-                id="password"
-                className={`auth-input ${
-                  fieldErrors.password ? "border-red-500" : ""
-                }`}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+            {/* <div className="text-center hidden md:block">
+              <Image
+                src="/assets/images/svg/register-img.svg"
+                alt="image"
+                width={400}
+                height={400}
+                layout="contain"
               />
+            </div> */}
 
+
+            <div className="bg-white auth-form px-10  ">
               <br />
-              <label
-                htmlFor="confirm-password"
-                className={fieldErrors.confirmPassword ? "text-red-500" : ""}
-              >
-                Confirmation de mot de passe
-              </label>
-              <input
-                type="password"
-                placeholder="Confirmation de nouveau mot de passe ici..."
-                id="confirm-password"
-                className={`auth-input ${
-                  fieldErrors.confimPassword ? "border-red-500" : ""
-                }`}
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-              />
+              <br />
+              <span className="">
+                <Image
+                  src="/assets/images/png/Plan de travail 1.png"
+                  alt="logo"
+                  width={150}
+                  height={150}
+                  className="object-contain"
+                />
+              </span>
 
               <br />
 
-              {error && <p className="text-red-500 text-center">{error}</p>}
+              <h2 className="regular sub-title text-center">
+                Veuillez renseigner votre nouveau mot de passe.
+              </h2>
               <br />
-              {isLoading ? (
-                <div className="btn btn-primary text-center w-full items-center justify-center">
-                  <ButtonLoading />
-                </div>
-              ) : (
-                <PrimaryButton onClick={handleReset} text="Changer" />
-              )}
-            </form>
+              <form>
+                <label
+                  htmlFor="password"
+                  className={fieldErrors.password ? "text-red-500" : "regular " }
+                >
+                  Mot de passe
+                </label>
+                <input
+                  type="password"
+                  placeholder="Votre nouveau mot de passe ici..."
+                  id="password"
+                  className={`auth-input regular  bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 text-gray-700 font-medium  ${fieldErrors.password ? "border-red-500" : ""
+                    }`}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
 
-            <br />
+                <br />
+                <label
+                  htmlFor="confirm-password"
+                  className={fieldErrors.confirmPassword ? "text-red-500" : "regular"}
+                >
+                  Confirmation de mot de passe
+                </label>
+                <input
+                  type="password"
+                  placeholder="Confirmation de nouveau mot de passe ici..."
+                  id="confirm-password"
+                  className={`auth-input regular  bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 text-gray-700 font-medium ${fieldErrors.confimPassword ? "border-red-500" : ""
+                    }`}
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                />
 
-            <p className="text-center">
-              Vous vous rappelez de votre mot de passe ?{" "}
-              <Link
-                href="/pages/authentication/login"
-                className="text-blue-600"
-              >
-                Se connecter
-              </Link>
-            </p>
+                <br />
 
-            <br />
-            <br />
-          </div>
+                {error && <p className="text-red-500 text-center">{error}</p>}
+                <br />
+                {isLoading ? (
+                  <div className="btn btn-primary text-center w-full items-center justify-center">
+                    <ButtonLoading />
+                  </div>
+                ) : (
+                  <PrimaryButton onClick={handleReset} text="Changer" />
+                )}
+              </form>
+
+              <br />
+
+              <p className="text-center regular">
+                Vous vous rappelez de votre mot de passe ?{" "}
+                <Link
+                  href="/pages/authentication/login"
+                  className="text-blue-600"
+                >
+                  Se connecter
+                </Link>
+              </p>
+
+              <br />
+              <br />
+            </div>
+
+          {/* </div> */}
+
+
         </div>
       </div>
     </div>

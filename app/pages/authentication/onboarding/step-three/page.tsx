@@ -46,10 +46,13 @@ const Page = () => {
         body: JSON.stringify(userData),
       });
 
+       console.log("res : ", response)
+       
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || "Echec de l'opération");
       }
+
 
       // Récupérer les données de la réponse
       const data = await response.json();
@@ -122,10 +125,10 @@ const Page = () => {
 
   return (
     <div className="auth-page min-h-screen flex flex-col">
-      <div className="step-three flex flex-col min-h-screen w-full">
+      <div className="bg-sky-500   bg-[url('/file2.svg')] step-three flex flex-col min-h-screen w-full items-center justify-center">
         <div className="auth-page-all-items px-4 md:px-28 py-10 flex-grow grid grid-cols-1 md:grid-cols-[repeat(auto-fit,minmax(300px,1fr))] h-full gap-6">
           {/* Image masquée sur mobile (sm et en dessous) */}
-          <div className="text-center hidden md:block">
+          {/* <div className="text-center hidden md:block">
             <Image
               src="/assets/images/svg/onboarding-tird-step.svg"
               alt="image"
@@ -133,19 +136,27 @@ const Page = () => {
               height={400}
               className="object-contain"
             />
-          </div>
+          </div> */}
 
           <div className="bg-white auth-form px-4 md:px-10 max-w-full flex flex-col items-center justify-center">
             {/* Barre de progression */}
             <div className="w-full bg-gray-200 h-2 mb-6">
-              <div className="bg-blue-500 h-2" style={{ width: "100%" }}></div>
+              <div className="bg-orange-500 h-2" style={{ width: "100%" }}></div>
             </div>
             <br />
             <br />
-            <span className="h-24 w-24 bg-gray-200 inline-block"></span>
+            <span className="inline-block">
+              <Image
+                src="/assets/images/png/Plan de travail 1.png"
+                alt="logo"
+                width={150}
+                height={150}
+                className="object-contain"
+              />
+            </span>
             <br />
 
-            <h2 className="righteous sub-title text-center">
+            <h2 className="regular sub-title text-center">
               Quelle est l'adresse de votre université ?
             </h2>
             <br />
@@ -173,21 +184,21 @@ const Page = () => {
             <br />
 
             {/* Boutons Précédent et Terminer */}
-            <div className="flex justify-center gap-4">
+            <div className="flex flex-col md:flex-row justify-center gap-4">
+              {/* hover:bg-gray-600 */}
               <button
                 onClick={handlePrevious}
-                className="px-6 py-2 rounded-lg transition-all duration-300 bg-gray-500 text-white hover:bg-gray-600"
+                className="w-full md:w-auto px-6 py-2 rounded-lg transition-all duration-300 bg-sky-500 text-white "
               >
                 Précédent
               </button>
               <button
                 onClick={handleFinish}
                 disabled={!selectedLocation || isLoading}
-                className={`px-6 py-2 rounded-lg transition-all duration-300 ${
-                  selectedLocation && !isLoading
-                    ? "bg-blue-500 text-white hover:bg-blue-600"
+                className={`w-full md:w-auto px-6 py-2 rounded-lg transition-all duration-300 ${selectedLocation && !isLoading
+                    ? "btn btn-primary text-white "
                     : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                }`}
+                  }`}
               >
                 {isLoading ? <ButtonLoading /> : "Terminer"}
               </button>

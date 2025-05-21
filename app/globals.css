@@ -682,7 +682,7 @@ a:hover {
 ------------------------------------------------------------------------*/
 
 .research-page {
-  background: url("/assets/images/webp/full-bg.webp") no-repeat center center;
+  /* background: url("/assets/images/webp/full-bg.webp") no-repeat center center; */
   background-size: cover;
   min-height: 100vh;
   width: 100%;
@@ -690,7 +690,7 @@ a:hover {
 
 .research-page-all-items {
   /* background: linear-gradient(#ff7b0046, #ff7b0030); */
-  background: linear-gradient(#fd476e56, #fd476e2f);
+  /* background: linear-gradient(#fd476e56, #fd476e2f); */
   height: 100%;
   width: 100%;
   display: grid;

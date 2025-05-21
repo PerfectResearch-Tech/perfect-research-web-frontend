@@ -1,10 +1,11 @@
 /* Utilisation des variables CSS définies dans :root */
 .sider-bar {
-  background-color: var(--grey); /* Fond de la sidebar */
+  background-color: ffffff; /* Fond de la sidebar */
   padding: 20px; /* Padding pour la sidebar */
   width: 300px; /* Largeur de la sidebar */
   /* min-height: 100vh; */
   box-shadow: var(--shadow-medium); /* Ombre portée */
+  border-radius: 10px;
 }
 
 .sider-bar h2 {
@@ -29,7 +30,7 @@
 .sider-item:hover,
 .sider-item:hover .text-black {
   background-color: var(--tertiary-color) !important;
-  color: var(--white) !important; /* Texte blanc au survol */
+  color: #0EA5E9 !important; /* Texte blanc au survol */
   transition: background-color var(--transition-duration)
       var(--transition-easing),
     color var(--transition-duration) var(--transition-easing);
