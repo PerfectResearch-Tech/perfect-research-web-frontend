@@ -10,7 +10,7 @@ import { toast, Toaster } from "sonner";
 import ButtonLoading from "@/app/components/Loading/ButtonLoading";
 import { getApiUrl } from "@/app/lib/config";
 
-const Registation = () => {
+const Registration = () => {
   const [username, setUsername] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -140,7 +140,8 @@ const Registation = () => {
       toast.success(data.message);
 
       // Rediriger avec le userId dans l'URL
-      window.location.href = `/pages/authentication/onboarding/step-one?user=${userId}`;
+      // window.location.href = `/pages/authentication/onboarding/step-one?user=${userId}`;
+            window.location.href = `/pages/perfect/chat?user=${userId}`;
     } catch (error) {
       console.error("Erreur lors de l'inscription :", error);
 
@@ -180,10 +181,10 @@ const Registation = () => {
   return (
     <div className="bg-sky-500 bg-[url('/file2.svg')] min-h-screen flex flex-col">
       <Toaster richColors position="top-right" />
-      <div className="auth-height flex flex-col min-h-screen w-full">
+      <div className="auth-height flex flex-col min-h-screen w-full items-center justify-center">
         <div className="auth-page-all-items px-4 md:px-28 py-10 flex-grow grid grid-cols-1 md:grid-cols-[repeat(auto-fit,minmax(300px,1fr))] h-full gap-6">
           {/* Image masquée sur mobile (sm et en dessous) */}
-          <div className="text-center hidden md:block">
+          {/* <div className="text-center hidden md:block">
             <Image
               src="/assets/images/svg/register-img.svg"
               alt="image"
@@ -191,22 +192,31 @@ const Registation = () => {
               height={400}
               layout="contain"
             />
-          </div>
+          </div> */}
 
           <div className="bg-white auth-form px-4 md:px-10 flex flex-col items-center justify-center">
             <br />
             <br />
-            <span className="h-24 w-24 bg-gray-200"></span>
+            <span className="">
+              <Image
+                src="/assets/images/png/Plan de travail 1.png"
+                alt="logo"
+                width={150}
+                height={150}
+                className="object-contain"
+              />
+            </span>
 
-            <br /> 
+            <br />
 
-            <h2 className="black sub-title">Créer un nouveau compte</h2>
+            <h2 className="regular sub-title">Créer un nouveau compte</h2>
             <br />
             {error && <p style={{ color: "red" }}>{error}</p>}
             <form>
               <label
                 htmlFor="username"
-                className={fieldErrors.username ? "text-red-500" : ""}
+                className={`regular ${fieldErrors.username ? "text-red-500" : ""}`}
+                // className={`regular ${fieldErrors.email ? "text-red-500" : "text-black"}`}
               >
                 Nom d'utilisateur
               </label>
@@ -214,15 +224,14 @@ const Registation = () => {
                 type="text"
                 placeholder="Votre Nom d'utilisateur ici..."
                 id="username"
-                className={`auth-input regular  bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 text-gray-700 font-medium ${
-                  fieldErrors.username ? "border-red-500" : ""
-                }`}
+                className={`auth-input regular  bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 text-gray-700 font-medium ${fieldErrors.username ? "border-red-500" : ""
+                  }`}
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
               />
               <label
                 htmlFor="email"
-                className={fieldErrors.email ? "text-red-500" : ""}
+                className={fieldErrors.email ? "text-red-500" : "regular"}
               >
                 Email
               </label>
@@ -230,15 +239,14 @@ const Registation = () => {
                 type="email"
                 placeholder="Votre Email ici..."
                 id="email"
-                className={`auth-input regular  bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 text-gray-700 font-medium ${
-                  fieldErrors.email ? "border-red-500" : ""
-                }`}
+                className={`auth-input regular  bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 text-gray-700 font-medium ${fieldErrors.email ? "border-red-500" : ""
+                  }`}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
               <label
                 htmlFor="password"
-                className={fieldErrors.password ? "text-red-500" : ""}
+                className={fieldErrors.password ? "text-red-500" : "regular"}
               >
                 Mot de passe
               </label>
@@ -246,15 +254,14 @@ const Registation = () => {
                 type="password"
                 placeholder="Votre mot de passe ici..."
                 id="password"
-                className={`auth-input regular  bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 text-gray-700 font-medium ${
-                  fieldErrors.password ? "border-red-500" : ""
-                }`}
+                className={`auth-input regular  bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 text-gray-700 font-medium ${fieldErrors.password ? "border-red-500" : ""
+                  }`}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
               <label
                 htmlFor="confim-password"
-                className={fieldErrors.verifyPassword ? "text-red-500" : ""}
+                className={fieldErrors.verifyPassword ? "text-red-500" : "regular"}
               >
                 Mot de passe de confirmation
               </label>
@@ -262,9 +269,8 @@ const Registation = () => {
                 type="password"
                 placeholder="Le même mot de passe ici..."
                 id="confim-password"
-                className={`auth-input regular  bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 text-gray-700 font-medium ${
-                  fieldErrors.verifyPassword ? "border-red-500" : ""
-                }`}
+                className={`auth-input regular  bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 text-gray-700 font-medium ${fieldErrors.verifyPassword ? "border-red-500" : ""
+                  }`}
                 value={verifyPassword}
                 onChange={(e) => setVerifyPassword(e.target.value)}
               />
@@ -283,7 +289,7 @@ const Registation = () => {
                       className={
                         passwordStrength.validLength
                           ? "text-green-500"
-                          : "text-red-500"
+                          : "text-red-500 regular"
                       }
                     >
                       {passwordStrength.validLength ? "✓" : "✗"} 7-13 caractères
@@ -292,7 +298,7 @@ const Registation = () => {
                       className={
                         passwordStrength.hasUpperCase
                           ? "text-green-500"
-                          : "text-red-500"
+                          : "text-red-500 regular"
                       }
                     >
                       {passwordStrength.hasUpperCase ? "✓" : "✗"} Majuscule
@@ -301,7 +307,7 @@ const Registation = () => {
                       className={
                         passwordStrength.hasNumber
                           ? "text-green-500"
-                          : "text-red-500"
+                          : "text-red-500 regular"
                       }
                     >
                       {passwordStrength.hasNumber ? "✓" : "✗"} Chiffre
@@ -310,7 +316,7 @@ const Registation = () => {
                       className={
                         passwordStrength.hasVowel
                           ? "text-green-500"
-                          : "text-red-500"
+                          : "text-red-500 regular"
                       }
                     >
                       {passwordStrength.hasVowel ? "✓" : "✗"} Voyelle
@@ -319,14 +325,14 @@ const Registation = () => {
                       className={
                         passwordStrength.hasSpecial
                           ? "text-green-500"
-                          : "text-red-500"
+                          : "text-red-500 regular"
                       }
                     >
                       {passwordStrength.hasSpecial ? "✓" : "✗"} Caractère
                       spécial
                     </p>
                     {!passwordStrength.validChars && (
-                      <p className="text-red-500">✗ Caractères non autorisés</p>
+                      <p className="text-red-500 regular">✗ Caractères non autorisés</p>
                     )}
                   </div>
                 </div>
@@ -382,4 +388,4 @@ const Registation = () => {
   );
 };
 
-export default Registation;
+export default Registration;

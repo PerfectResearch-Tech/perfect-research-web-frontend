@@ -104,11 +104,11 @@ const Sider = ({ selectedItem, setSelectedItem }: any) => {
       <section
         className={`sider-bar fixed top-0 left-0 h-screen w-80 bg-white shadow-lg transform transition-transform duration-300 ease-in-out overflow-y-auto z-40 ${
           isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } md:translate-x-0 md:static md:w-80 md:min-h-screen md:shadow-lg flex flex-col justify-between px-6 py-8`}
+        } md:translate-x-0 md:static md:w-80 md:min-h-screen md:shadow-lg flex flex-col justify-between px-6 py-8`} 
       >
         <ul className="space-y-4">
           <li>
-            <h2 className="righteous text-center text-3xl py-4 text-primary">
+            <h2 className="black text-center text-3xl py-4 text-primary ">
               Admin
             </h2>
           </li>
@@ -200,7 +200,7 @@ const Sider = ({ selectedItem, setSelectedItem }: any) => {
             onClick={() => {
               window.location.href = "/pages/perfect/chat";
             }}
-            className="w-full px-4 py-3 rounded-lg bg-white text-tertiary-color border bg-tertiary-color hover:bg-tertiary-color hover:text-white transition-all duration-200"
+            className="ligth text-xl w-full px-4 py-3 rounded-lg bg-white text-blue-600 border border-blue-600 hover:bg-blue-600 hover:text-white transition-all duration-200"
           >
             Commencer un chat
           </button>
@@ -208,13 +208,13 @@ const Sider = ({ selectedItem, setSelectedItem }: any) => {
             onClick={() => {
               window.location.href = "/pages/perfect/research";
             }}
-            className="w-full px-4 py-3 rounded-lg bg-white text-tertiary-color border bg-tertiary-color hover:bg-tertiary-color hover:text-white transition-all duration-200"
+            className="ligth w-full text-xl px-4 py-3 rounded-lg bg-white text-blue-600 border border-blue-600 hover:bg-blue-600 hover:text-white transition-all duration-200"
           >
             Rechercher un document
           </button>
           <button
             onClick={openModal}
-            className="w-full px-4 py-3 rounded-lg bg-white text-tertiary-color border bg-tertiary-color hover:bg-tertiary-color hover:text-white transition-all duration-200"
+            className="ligth text-xl w-full px-4 py-3 rounded-lg bg-white text-blue-600 border border-blue-600 hover:bg-blue-600 hover:text-white transition-all duration-200"
           >
             Voir mon profil
           </button>

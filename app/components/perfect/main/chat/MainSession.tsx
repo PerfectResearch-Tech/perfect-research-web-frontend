@@ -256,6 +256,8 @@ const MainSession = ({
         </h1>
       </div>
 
+      {/* <CircleUserRound /> */}
+
       {/* Zone des messages */}
       <div className="flex-1 overflow-y-auto p-4 md:px-6">
         {messages.length === 0 ? (

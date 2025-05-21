@@ -5,7 +5,7 @@
 ------------------------------------------------------------------------*/
 
 .auth-page {
-  background: url("/assets/images/webp/full-bg.webp") no-repeat center center;
+  /* background: url("/assets/images/webp/full-bg.webp") no-repeat center center; */
   background-size: cover;
   /* min-height: 100vh; */
   width: 100%;
@@ -18,26 +18,27 @@
 .auth-page-all-items {
   /* background: linear-gradient(#ff7b0046, #ff7b0030); */
   align-items: center;
-  height: 100%;
-  width: 100%;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  justify-content: center;
+  height: 55%;
+  width: 55%;
+  /* display: grid; */
+  /* grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); */
 }
 
-.step-one {
-  /* display: flex; */
-  /* align-items: center; */
+/* .step-one {
+  display: flex;
+  align-items: center;
   background: linear-gradient(#fd476e56, #fd476e2f);
-  /* height: 110vh; */
-}
+  height: 110vh;
+} */
 
-.step-twoo {
+/* .step-twoo {
   background: linear-gradient(#ff7b0062, #ff7b0073);
-}
+} */
 
-.step-three {
+/* .step-three {
   background: linear-gradient(#000000a7, #66666677);
-}
+} */
 
 .auth-form {
   display: flex;
@@ -49,7 +50,7 @@
 
 .auth-input {
   /* border: none; */
-border-color: #32a1ce;
+/* border-color: #32a1ce; */
    border-bottom: none;
   background-color: var(--grey);
   font-size: 1.2rem;

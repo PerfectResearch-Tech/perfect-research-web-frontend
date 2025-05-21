@@ -64,7 +64,7 @@ const DocumentsSession = ({
           className="w-24 sm:w-32 md:w-40 lg:w-48 h-auto"
         />
         <div>
-          <h3 className="righteous text-primary">{title}</h3>
+          <h3 className="regular text-primary">{title}</h3>
           {/* <br /> */}
           <p>Type : {type}</p>
           <p>Année : {year}</p>

@@ -78,11 +78,13 @@ const Login = () => {
   };
 
   return (
-    <div className="auth-page">
+    <div className="bg-sky-500 bg-[url('/file2.svg')] min-h-screen flex flex-col">
       <Toaster richColors position="top-right" />
-      <div className="auth-height">
-        <div className="auth-page-all-items px-28 py-10">
-          <div className="text-center">
+      <div className="auth-height flex flex-col min-h-screen w-full justify-center items-center">
+        <div className="auth-page-all-items px-4 md:px-28 py-10 flex-grow grid grid-cols-1 md:grid-cols-[repeat(auto-fit,minmax(300px,1fr))] h-full gap-6">
+
+          {/* ici le hidden md:blocksupprime l'affichage de ce image sur certaine écran */}
+          {/* <div className="text-center hidden md:block">
             <Image
               src="/assets/images/svg/register-img.svg"
               alt="image"
@@ -90,23 +92,31 @@ const Login = () => {
               height={400}
               layout="contain"
             />
-          </div>
+          </div> */}
 
-          <div className="bg-white auth-form px-10">
+          <div className="bg-white auth-form px-10 ">
             <br />
             <br />
-            <span className="h-24 w-24 bg-gray-200"></span>
+            <span className="">
+              <Image
+                src="/assets/images/png/Plan de travail 1.png"
+                alt="logo"
+                width={150}
+                height={150}
+                className="object-contain"
+              />
+            </span>
 
             <br />
 
-            <h2 className="righteous sub-title text-center">
+            <h2 className="regular sub-title text-center">
               Renseignez votre email pour récupérer votre mot de passe.
             </h2>
             <br />
             <form>
               <label
                 htmlFor="email"
-                className={fieldErrors.email ? "text-red-500" : ""}
+                className={fieldErrors.email ? "text-red-500" : "regular"}
               >
                 Email
               </label>
@@ -114,9 +124,8 @@ const Login = () => {
                 type="email"
                 placeholder="Votre Email ici..."
                 id="email"
-                className={`auth-input ${
-                  fieldErrors.email ? "border-red-500" : ""
-                }`}
+                className={`auth-input regular  bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 text-gray-700 font-medium ${fieldErrors.email ? "border-red-500" : ""
+                  }`}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
@@ -136,7 +145,7 @@ const Login = () => {
 
             <br />
 
-            <p className="text-center">
+            <p className="text-center regular">
               Vous vous rappelez de votre mot de passe ?{" "}
               <Link
                 href="/pages/authentication/login"

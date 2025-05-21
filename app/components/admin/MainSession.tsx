@@ -506,8 +506,8 @@ const MainSession: React.FC<MainSessionProps> = ({ selectedItem }) => {
           </div>
         ) : (
           <div>
-            <h1 className="righteous text-2xl font-bold mb-4">
-              Vérifiez et soumettez votre document
+            <h1 className="regular text-2xl font-bold mb-4">
+              Vérifiez et soumettez votre document 
             </h1>
           </div>
         )}

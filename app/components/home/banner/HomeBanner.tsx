@@ -39,7 +39,7 @@ const HomeBanner = () => {
             <div className="flex flex-col sm:flex-row justify-center gap-4 mt-8 animate-fade-in delay-200">
               <Link href="pages/perfect/chat">
                 <button className="btn btn-primary px-8 py-3 text-lg">
-                  Découvrir
+                  Débuter maintenant
                 </button>
               </Link>
               
