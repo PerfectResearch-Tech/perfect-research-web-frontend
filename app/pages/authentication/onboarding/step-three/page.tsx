@@ -125,7 +125,7 @@ const Page = () => {
 
   return (
     <div className="auth-page min-h-screen flex flex-col">
-      <div className="bg-sky-500   bg-[url('/file2.svg')] step-three flex flex-col min-h-screen w-full items-center justify-center">
+      <div className="bg-sky-700   bg-[url('/file2.svg')] step-three flex flex-col min-h-screen w-full items-center justify-center">
         <div className="auth-page-all-items px-4 md:px-28 py-10 flex-grow grid grid-cols-1 md:grid-cols-[repeat(auto-fit,minmax(300px,1fr))] h-full gap-6">
           {/* Image masquée sur mobile (sm et en dessous) */}
           {/* <div className="text-center hidden md:block">
