@@ -10,11 +10,15 @@ import {
   FaBars,
   FaTimes,
   FaUser,
+   FaSearch,
+     FaFileUpload,
+   
 } from "react-icons/fa"; // Ajout de FaBars et FaTimes
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { getApiUrl } from "@/app/lib/config";
+import { MessageSquareText } from "lucide-react";
 
 const Sider = ({ selectedItem, setSelectedItem }: any) => {
   const [isSystemOpen, setIsSystemOpen] = useState<boolean>(false);
@@ -90,6 +94,24 @@ const Sider = ({ selectedItem, setSelectedItem }: any) => {
     router.push("/pages/authentication/login");
   };
 
+
+const SidebarButton: React.FC<{
+  icon: React.ReactNode;
+  text: string;
+  onClick: () => void;
+}> = ({ icon, text, onClick }) => (
+  <button
+    onClick={onClick}
+    className="flex items-center w-full p-3 rounded-lg hover:bg-gray-100 text-gray-700"
+  >
+    <span className="mr-3">{icon}</span>
+    <span>{text}</span>
+  </button>
+);
+
+
+
+
   return (
     <>
       {/* Bouton hamburger pour mobile */}
@@ -106,12 +128,27 @@ const Sider = ({ selectedItem, setSelectedItem }: any) => {
           isSidebarOpen ? "translate-x-0" : "-translate-x-full"
         } md:translate-x-0 md:static md:w-80 md:min-h-screen md:shadow-lg flex flex-col justify-between px-6 py-8`} 
       >
+
+
+
         <ul className="space-y-4">
           <li>
             <h2 className="black text-center text-3xl py-4 text-primary ">
               Admin
             </h2>
           </li>
+
+          <SidebarButton
+                  icon={<MessageSquareText size={15} />}
+                  text="Commencer un chat"
+                  onClick={() => router.push("/pages/perfect/chat")}
+                />
+                <SidebarButton
+                  icon={<FaFileUpload size={14} />}
+                  text="Rechercher un document"
+                  onClick={() => router.push("/pages/perfect/research")}
+                />
+
 
           {/* Menu Documents */}
           <li>
@@ -212,17 +249,17 @@ const Sider = ({ selectedItem, setSelectedItem }: any) => {
           >
             Rechercher un document
           </button>
-          <button
+          {/* <button
             onClick={openModal}
             className="ligth text-xl w-full px-4 py-3 rounded-lg bg-white text-blue-600 border border-blue-600 hover:bg-blue-600 hover:text-white transition-all duration-200"
           >
             Voir mon profil
-          </button>
+          </button> */}
         </div>
       </section>
 
       {/* Modal de profil */}
-      {isModalOpen && (
+      {/* {isModalOpen && (
         <div
           data-dialog-backdrop="dialog"
           onClick={closeModal}
@@ -277,7 +314,7 @@ const Sider = ({ selectedItem, setSelectedItem }: any) => {
             </div>
           </div>
         </div>
-      )}
+      )} */}
     </>
   );
 };

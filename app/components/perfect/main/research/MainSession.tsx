@@ -341,7 +341,7 @@ const MainSession = ({ data }: Props) => {
 
   return (
     <div className="flex flex-col min-h-screen p-4 sm:p-6 w-full">
-      <h1 className="black">
+      <h1 className="regular">
         Trouvez un document grâce au perfect research
       </h1>
       <br />

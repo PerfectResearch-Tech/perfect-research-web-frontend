@@ -35,7 +35,7 @@ const page = () => {
   };
 
   return (
-    <div className=" research-page bg-sky-500 bg-[url('/file2.svg')]">
+    <div className=" research-page bg-custom bg-[url('/file2.svg')]">
       <div className="research-page-all-items md:p-16">
         <div className="flex flex-col md:flex-row p-4 sm:p-8 min-h-screen bg-white">
           <SideBar handlerCurrentData={handlerCurrentData} />
