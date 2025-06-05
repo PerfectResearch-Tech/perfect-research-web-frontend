@@ -78,7 +78,7 @@ const Login = () => {
   };
 
   return (
-    <div className="bg-sky-500 bg-[url('/file2.svg')] min-h-screen flex flex-col">
+    <div className="bg-custom bg-[url('/file2.svg')] min-h-screen flex flex-col">
       <Toaster richColors position="top-right" />
       <div className="auth-height flex flex-col min-h-screen w-full justify-center items-center">
         <div className="auth-page-all-items px-4 md:px-28 py-10 flex-grow grid grid-cols-1 md:grid-cols-[repeat(auto-fit,minmax(300px,1fr))] h-full gap-6">
@@ -124,7 +124,7 @@ const Login = () => {
                 type="email"
                 placeholder="Votre Email ici..."
                 id="email"
-                className={`auth-input regular  bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 text-gray-700 font-medium ${fieldErrors.email ? "border-red-500" : ""
+                className={`auth-input regular  bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-700 transition-all duration-200 text-gray-700 font-medium ${fieldErrors.email ? "border-red-500" : ""
                   }`}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -149,7 +149,7 @@ const Login = () => {
               Vous vous rappelez de votre mot de passe ?{" "}
               <Link
                 href="/pages/authentication/login"
-                className="text-blue-600"
+                className="text-blue-700 regular"
               >
                 Se connecter
               </Link>

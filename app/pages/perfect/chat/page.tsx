@@ -30,31 +30,69 @@ const Page = () => {
 
 
 
-    const checkUserProfileStatus = async () => {
-      try {
-        const response = await fetch(`${getApiUrl(`/user/${userIdStored}`)}`, {
+    // const checkUserProfileStatus = async () => {
+    //   try {
+    //     const response = await fetch(`${getApiUrl(`/user/${userIdStored}`)}`, {
         
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
+    //       headers: {
+    //         Authorization: `Bearer ${accessToken}`,
+    //       },
+    //     });
 
-        if (!response.ok) {
-          throw new Error("Erreur lors de la récupération du profil utilisateur");
-        }
+    //     if (!response.ok) {
+    //       throw new Error("Erreur lors de la récupération du profil utilisateur");
+    //     }
 
-        const userData = await response.json();
+    //     const userData = await response.json();
 
-        if (!userData.isProfileComplete) {
-          setShowProfilePopup(true);
-        }
+    //     if (!userData.isProfileComplete) {
+    //       setShowProfilePopup(true);
+    //     }
 
-        setIsLoading(false);
-      } catch (error) {
-        console.error("Erreur :", error);
-        toast.error("Impossible de vérifier le profil utilisateur");
-      }
-    };
+    //     setIsLoading(false);
+    //   } catch (error) {
+    //     console.error("Erreur :", error);
+    //     toast.error("Impossible de vérifier le profil utilisateur");
+    //   }
+    // };
+
+
+
+
+const checkUserProfileStatus = async () => {
+  try {
+    const response = await fetch(`${getApiUrl(`/user/${userIdStored}`)}`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Erreur lors de la récupération du profil utilisateur");
+    }
+
+    const text = await response.text();
+    const userData = text ? JSON.parse(text) : null;
+
+    if (!userData) {
+      throw new Error("Réponse vide du serveur");
+    }
+
+    const isAdmin = userData.role === "ADMIN";
+    const isProfileComplete = userData.isProfileComplete;
+
+    if (!isAdmin && !isProfileComplete) {
+      setShowProfilePopup(true);
+    }
+
+    setIsLoading(false);
+  } catch (error) {
+    console.error("Erreur :", error);
+    toast.error("Impossible de vérifier le profil utilisateur");
+  }
+};
+
+
 
     checkUserProfileStatus();
   }, [router]);

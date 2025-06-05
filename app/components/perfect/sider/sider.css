@@ -58,3 +58,49 @@ h2.righteous {
 .sider-chat-item:hover {
   background-color: #1d4ed8; /* Bleu foncé au survol */
 }
+
+
+
+
+
+
+
+
+
+/* sider.css */
+.sider-bar {
+  transition: all 0.3s ease;
+}
+
+@media (max-width: 767px) {
+  .sider-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 50;
+  }
+}
+
+/* Animation de base */
+.sider-chat-item {
+  transition: all 0.2s ease;
+}
+
+/* Scrollbar personnalisée */
+.sider-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sider-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.sider-container::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.sider-container::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}

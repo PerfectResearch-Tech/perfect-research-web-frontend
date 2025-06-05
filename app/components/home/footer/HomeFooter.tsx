@@ -4,14 +4,14 @@ import { FaLinkedin, FaFacebook, FaTiktok } from "react-icons/fa";
 
 const HomeFooter = () => {
   return (
-    <footer className="py-10 px-4 sm:px-8 md:px-16 transition-all duration-300 bg-white bg-[url('/file2.svg')]">
+    <footer className=" py-10 px-4 sm:px-8 md:px-16 transition-all duration-300 bg-white bg-[url('/file2.svg')]">
       <div className="footer-items grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto text-gray-700  ">
         {/* Section Description */}
         <div className="relative p-4 rounded-lg border border-gray-700 hover:border-[var(--secondary-color)] transition-all duration-300 group">
-          <h1 className="text-2xl font-bold hover:text-[var(--secondary-color)] transition-colors duration-300 relative z-10">
+          <h1 className="text-2xl font-bold hover:text-[var(--secondary-color)] transition-colors duration-300 relative z-10 text-black">
             Perfect Research
           </h1>
-          <p className="text-justify text-sm mt-2 hover:text-[var(--secondary-color)] transition-colors duration-300 relative z-10">
+          <p className="text-justify text-sm mt-2 hover:text-[var(--secondary-color)] transition-colors duration-300 relative z-10 text-black">
             Explorez l'univers de la connaissance avec nous. Lorem ipsum dolor
             sit amet consectetur adipisicing elit.
           </p>
@@ -20,58 +20,58 @@ const HomeFooter = () => {
 
         {/* Section Menu */}
         <div className="justify-center p-4">
-          <h3 className="text-lg font-semibold hover:text-[var(--secondary-color)] transition-colors duration-300 border-b-2 border-transparent hover:border-[var(--secondary-color)] pb-1">
+          <h3 className="text-lg font-semibold hover:text-[var(--secondary-color)] transition-colors duration-300 border-b-2 border-transparent hover:border-[var(--secondary-color)] pb-1 text-black">
             Menu
           </h3>
           <nav className="mt-4 space-y-3">
             <Link
-              href="#"
-              className="block text-sm hover:text-[var(--secondary-color)] transition-all duration-300 transform hover:translate-x-2"
+              href="#Acceuil"
+              className="block text-sm hover:text-[var(--secondary-color)] transition-all duration-300 transform hover:translate-x-2 text-black"
             >
               Accueil
             </Link>
             <Link
-              href="/docs"
-              className="block text-sm hover:text-[var(--secondary-color)] transition-all duration-300 transform hover:translate-x-2"
+              href="#Nos offres"
+              className="block text-sm hover:text-[var(--secondary-color)] transition-all duration-300 transform hover:translate-x-2 text-black"
             >
-              Docs
+              Nos offres
             </Link>
-            <Link
+            {/* <Link
               href="#contact"
               className="block text-sm hover:text-[var(--secondary-color)] transition-all duration-300 transform hover:translate-x-2"
             >
               Contact
-            </Link>
-            <Link
+            </Link> */}
+            {/* <Link
               href="#donation"
               className="block text-sm hover:text-[var(--secondary-color)] transition-all duration-300 transform hover:translate-x-2"
             >
               Faire un Don
-            </Link>
+            </Link> */}
           </nav>
         </div>
 
         {/* Section Produits et Réseaux Sociaux */}
         <div className="p-4">
-          <h3 className="text-lg font-semibold hover:text-[var(--secondary-color)] transition-colors duration-300 border-b-2 border-transparent hover:border-[var(--secondary-color)] pb-1">
-            Nos Produits
+          <h3 className="text-lg font-semibold hover:text-[var(--secondary-color)] transition-colors duration-300 border-b-2 border-transparent hover:border-[var(--secondary-color)] pb-1 text-black">
+            Nos Offres
           </h3>
           <nav className="mt-4 space-y-3">
             <Link
               href="/pages/perfect/chat"
-              className="block text-sm hover:text-[var(--secondary-color)] transition-all duration-300 transform hover:translate-x-2"
+              className="block text-sm hover:text-[var(--secondary-color)] transition-all duration-300 transform hover:translate-x-2 text-black"
             >
               Perfect Chat
             </Link>
             <Link
               href="/pages/perfect/research"
-              className="block text-sm hover:text-[var(--secondary-color)] transition-all duration-300 transform hover:translate-x-2"
+              className="block text-sm hover:text-[var(--secondary-color)] transition-all duration-300 transform hover:translate-x-2 text-black"
             >
               Perfect Research
             </Link>
           </nav>
 
-          <h3 className="text-lg font-semibold hover:text-[var(--secondary-color)] transition-colors duration-300 mt-6 border-b-2 border-transparent hover:border-[var(--secondary-color)] pb-1">
+          <h3 className="text-lg font-semibold hover:text-[var(--secondary-color)] transition-colors duration-300 mt-6 border-b-2 border-transparent hover:border-[var(--secondary-color)] pb-1 text-black">
             Réseaux Sociaux
           </h3>
           <ul className="flex flex-row gap-6 mt-4">

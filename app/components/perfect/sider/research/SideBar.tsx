@@ -154,7 +154,7 @@ const SideBar = ({
   return (
     <section className="sider-bar px-5 py-10 w-full md:w-80 bg-gray-800 text-white min-h-screen md:min-h-0">
       <div>
-        <form className="max-w-sm mx-auto">
+        <form className="max-w-sm mx-auto regular">
           {/* <label
             htmlFor="countries"
             className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
@@ -214,7 +214,7 @@ const SideBar = ({
           {/* Sélection des universités */}
           <select
             id="universities"
-            className="py-5 bg-gray-50 border border-gray-300 text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500 quicksand-bold"
+            className="py-5 bg-gray-50 border border-gray-300 text-gray-900 text-sm focus:ring-blue-700 focus:border-blue-700 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500 quicksand-bold"
             // onChange={(e) => handleChange(e)}
             onChange={handleChange}
             value={selectedUniversity || ""}
@@ -233,7 +233,7 @@ const SideBar = ({
           {/* Sélection des disciplines */}
           <select
             id="disciplines"
-            className="py-5 bg-gray-50 border border-gray-300 text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500 quicksand-bold"
+            className="py-5 bg-gray-50 border border-gray-300 text-gray-900 text-sm focus:ring-blue-700 focus:border-blue-700 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500 quicksand-bold"
             onChange={handleChange}
             value={selectedDiscipline || ""}
           >
@@ -251,7 +251,7 @@ const SideBar = ({
           {/* Sélection des pays */}
           <select
             id="countries"
-            className="py-5 bg-gray-50 border border-gray-300 text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500 quicksand-bold"
+            className="py-5 bg-gray-50 border border-gray-300 text-gray-900 text-sm focus:ring-blue-700 focus:border-blue-700 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500 quicksand-bold"
             onChange={handleChange}
             value={selectedCountry || ""}
           >

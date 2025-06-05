@@ -64,14 +64,14 @@ const DocumentsSession = ({
           className="w-24 sm:w-32 md:w-40 lg:w-48 h-auto"
         />
         <div>
-          <h3 className="regular text-primary">{title}</h3>
+          <h3 className="black ">{title}</h3>
           {/* <br /> */}
-          <p>Type : {type}</p>
-          <p>Année : {year}</p>
-          <p>Auteur : {author}</p>
-          <p>Discipline : {discipline}</p>
-          <p>Université : {university}</p>
-          <p>Pays : {country}</p>
+          <p className="regular">Type : {type}</p>
+          <p className="regular">Année : {year}</p>
+          <p className="regular">Auteur : {author}</p>
+          <p className="regular">Discipline : {discipline}</p>
+          <p className="regular">Université : {university}</p>
+          <p className="regular">Pays : {country}</p>
           <button onClick={handleDownload} className="text-primary">
             <FaDownload />
           </button>

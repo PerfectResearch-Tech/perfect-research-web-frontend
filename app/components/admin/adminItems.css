@@ -30,7 +30,7 @@
 .sider-item:hover,
 .sider-item:hover .text-black {
   background-color: var(--tertiary-color) !important;
-  color: #0EA5E9 !important; /* Texte blanc au survol */
+  color: #0451de !important; /* Texte blanc au survol */
   transition: background-color var(--transition-duration)
       var(--transition-easing),
     color var(--transition-duration) var(--transition-easing);

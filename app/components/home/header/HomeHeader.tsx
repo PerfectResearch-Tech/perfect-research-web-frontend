@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import React, { useState, useEffect } from "react";
-import Image from 'next/image';
+import Image from "next/image";
 
 function HomeHeader() {
   const [isOpen, setIsOpen] = useState(false); // Pour le dropdown Products
@@ -50,12 +50,11 @@ function HomeHeader() {
       <div className="hidden md:flex items-center justify-between w-full max-w-7xl mx-auto px-4 py-4">
         <div className="flex-shrink-0 w-[150px]">
           <Image
-            src="/assets/images/png/Plan de travail 1 copie.png"
+            src="/assets/images/png/Plan de travail 1.png"
             alt="Logo"
             width={150}
             height={150}
             className="object-contain"
-            
           />
         </div>
 
@@ -93,7 +92,7 @@ function HomeHeader() {
                 <ul className="py-2 text-sm text-gray-700 dark:text-gray-200">
                   <li>
                     <Link href="/pages/perfect/chat">
-                      <span className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                      <span className="block px-4 py-2  hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
                         Perfect Chat
                       </span>
                     </Link>
@@ -130,20 +129,27 @@ function HomeHeader() {
         </ul>
 
         <Link href="pages/perfect/chat">
-          <span className="btn btn-primary">Faire une demo</span>
+          <span className="btn btn-primary text-lg bold uppercase">
+            Faire une demo
+          </span>
         </Link>
       </div>
 
       {/* Menu mobile (Responsive) */}
       <div className="flex md:hidden flex-row items-center justify-between home-menu px-4">
-        <span
-          className="bg-slate-600 rounded-lg"
-          style={{ height: 50, width: 50 }}
-        ></span>
+        <div className="" style={{ height: 70, width: 70 }}>
+          <Image
+            src="/assets/images/png/Plan de travail 1 copie.png"
+            alt="Logo"
+            width={70}
+            height={70}
+            className="object-contain"
+          />
+        </div>
 
         <button
           id="mobileMenuButton"
-          className="text-white focus:outline-none"
+          className="text-black focus:outline-none "
           onClick={toggleMobileMenu}
         >
           <svg
@@ -174,7 +180,7 @@ function HomeHeader() {
             <button
               onClick={toggleDropdown}
               id="mobileDropdownButton"
-              className="text-dark focus:ring-4 focus:outline-none font-medium rounded-lg text-sm inline-flex items-center"
+              className="text-dark focus:ring-4 focus:outline-none font-medium rounded-lg text-sm inline-flex items-center "
               type="button"
             >
               Products
