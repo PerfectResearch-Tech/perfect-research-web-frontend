@@ -29,17 +29,20 @@ const MainSession: React.FC<MainSessionProps> = ({ selectedItem }) => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
+  const [companyId, setCompanyId] = useState<string>(""); // Ajout de companyId
 
   const fetchUser = async () => {
     const token = localStorage.getItem("accessToken");
     const userId = localStorage.getItem("user");
 
     if (!token || !userId) {
-      console.error("Vous devez être connecté pour effectuer cette action.");
+      console.error("[DEBUG] Token ou userId manquant dans localStorage");
+      toast.error("Vous devez être connecté pour effectuer cette action.");
       return;
     }
 
     try {
+      console.log("[DEBUG] Envoi de la requête vers /user/connected/", userId);
       const response = await fetch(
         `${getApiUrl(`/user/connected/${userId}`)}`,
         {
@@ -51,12 +54,20 @@ const MainSession: React.FC<MainSessionProps> = ({ selectedItem }) => {
       );
 
       if (!response.ok) {
+        const statusText = response.statusText || `Erreur HTTP ${response.status}`;
+        console.log("[DEBUG] Réponse non-OK:", response.status, statusText);
         throw new Error("Erreur lors de la récupération de l'utilisateur");
       }
 
       const user = await response.json();
-      setUsername(user.username);
-      setEmail(user.email);
+      console.log("[DEBUG] Données utilisateur reçues:", user);
+      setUsername(user.username || "");
+      setEmail(user.email || "");
+      setCompanyId(user.companyId || ""); // Stockage de companyId
+      if (!user.companyId) {
+        console.warn("[DEBUG] Aucun companyId trouvé dans la réponse");
+        toast.error("L'identifiant de l'entreprise est manquant.");
+      }
     } catch (error) {
       console.error("Erreur lors de la récupération :", error);
       toast.error("Erreur lors de la récupération");
@@ -83,6 +94,7 @@ const MainSession: React.FC<MainSessionProps> = ({ selectedItem }) => {
 
     if (!token) {
       setError("Vous devez être connecté pour effectuer cette action.");
+      setIsLoading(false);
       return;
     }
 
@@ -105,6 +117,7 @@ const MainSession: React.FC<MainSessionProps> = ({ selectedItem }) => {
         break;
       default:
         setError("Aucune option valide sélectionnée");
+        setIsLoading(false);
         return;
     }
 
@@ -121,6 +134,7 @@ const MainSession: React.FC<MainSessionProps> = ({ selectedItem }) => {
 
       if (!response.ok) {
         const errorData = await response.json();
+        console.log("[DEBUG] Réponse d'erreur:", errorData);
         throw new Error(errorData.message || "Erreur lors de la récupération");
       }
 
@@ -181,11 +195,13 @@ const MainSession: React.FC<MainSessionProps> = ({ selectedItem }) => {
         break;
       default:
         setError("Aucune option valide sélectionnée");
+        setIsLoading(false);
         return;
     }
 
     if (!inputValue.toString().trim()) {
       setError("Veuillez remplir le champ");
+      setIsLoading(false);
       return;
     }
 
@@ -218,6 +234,7 @@ const MainSession: React.FC<MainSessionProps> = ({ selectedItem }) => {
         break;
       default:
         setError("Aucune option valide sélectionnée");
+        setIsLoading(false);
         return;
     }
 
@@ -235,6 +252,7 @@ const MainSession: React.FC<MainSessionProps> = ({ selectedItem }) => {
 
       if (!response.ok) {
         const errorData = await response.json();
+        console.log("[DEBUG] Réponse d'erreur:", errorData);
         throw new Error(errorData.message || "Erreur lors de la soumission");
       }
 
@@ -266,7 +284,7 @@ const MainSession: React.FC<MainSessionProps> = ({ selectedItem }) => {
   const renderContent = () => {
     switch (selectedItem) {
       case "Documents":
-        return <DocumentsMain />;
+        return <DocumentsMain companyId={companyId} />; // Passage de companyId
       case "Années":
         return isLoading ? (
           <Loading />

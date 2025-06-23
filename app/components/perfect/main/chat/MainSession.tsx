@@ -1,6 +1,6 @@
-// Importations des dépendances principales
+'use client';
+
 import React, { useState, useEffect, useRef, useCallback } from "react";
-// Icônes de Font Awesome
 import { 
   FaComment, 
   FaPaperclip, 
@@ -9,24 +9,19 @@ import {
   FaMicrophone,
   FaGlobe
 } from "react-icons/fa";
-// Bibliothèque de notifications
 import { toast } from "sonner";
-// Icônes supplémentaires
 import { CircleUserRound } from "lucide-react";
-// Configuration de l'API
 import { getApiUrl } from "@/app/lib/config";
-// Génération d'ID uniques
 import { v4 as uuidv4 } from "uuid";
+import io, { Socket } from 'socket.io-client';
 
-// Interface pour définir la structure d'un message
 interface Message {
-  id: string | null;
+  id: string;
   content: string;
-  sender: "USER" | "ai"; // Soit envoyé par l'utilisateur, soit par l'IA
+  sender: "USER" | "RAG";
   timestamp: Date;
 }
 
-// Props attendues par le composant MainSession
 interface MainSessionProps {
   activeChatId: string | null;
   setActiveChatId: (id: string | null) => void;
@@ -34,7 +29,14 @@ interface MainSessionProps {
   fetchUserChats: () => void;
 }
 
-// Composant pour afficher un indicateur de chargement
+interface ProfilDropdownProps {
+  isProfileOpen: boolean;
+  setIsProfileOpen: (value: boolean) => void;
+  username: string;
+  email: string;
+  handleLogout: () => void;
+}
+
 const ChatLoading = () => (
   <div className="animate-pulse">
     <div className="w-3 h-3 bg-gray-400 rounded-full inline-block mr-1"></div>
@@ -43,39 +45,88 @@ const ChatLoading = () => (
   </div>
 );
 
-// Composant principal de la session de chat
+const ProfilDropdown = ({ 
+  isProfileOpen, 
+  setIsProfileOpen, 
+  username, 
+  email, 
+  handleLogout 
+}: ProfilDropdownProps) => {
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsProfileOpen(false);
+      }
+    };
+
+    if (isProfileOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isProfileOpen, setIsProfileOpen]);
+
+  return (
+    isProfileOpen && (
+      <div
+        ref={dropdownRef}
+        className="absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg z-50 border border-gray-200"
+      >
+        <div className="p-4 border-b border-gray-200">
+          <h3 className="font-medium text-gray-900">Mon Profil</h3>
+        </div>
+        <div className="p-4">
+          <div className="mb-3">
+            <p className="text-sm text-gray-500">Nom d'utilisateur</p>
+            <p className="font-medium">{username || "Chargement..."}</p>
+          </div>
+          <div className="mb-4">
+            <p className="text-sm text-gray-500">Email</p>
+            <p className="font-medium">{email || "Chargement..."}</p>
+          </div>
+          <button
+            onClick={handleLogout}
+            className="w-full py-2 px-4 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
+          >
+            Déconnexion
+          </button>
+        </div>
+      </div>
+    )
+  );
+};
+
 const MainSession = ({
   activeChatId,
   setActiveChatId,
   initialMessages,
   fetchUserChats,
 }: MainSessionProps) => {
-  // États du composant
-  const [messages, setMessages] = useState<Message[]>(() => initialMessages);
-  const [inputValue, setInputValue] = useState(""); // Contenu du champ de saisie
-  const [isAiTyping, setIsAiTyping] = useState(false); // Si l'IA est en train de répondre
-  const [selectedFile, setSelectedFile] = useState<File | null>(null); // Fichier sélectionné
-  const [isRecording, setIsRecording] = useState(false); // Si l'enregistrement vocal est actif
-  const [isProfileOpen, setIsProfileOpen] = useState(false); // Si le menu profil est ouvert
-  const [username, setUsername] = useState(""); // Nom d'utilisateur
-  const [email, setEmail] = useState(""); // Email de l'utilisateur
+  const [messages, setMessages] = useState<Message[]>(initialMessages);
+  const [inputValue, setInputValue] = useState("");
+  const [isAiTyping, setIsAiTyping] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [companyId, setCompanyId] = useState(""); // Ajouté pour companyId dynamique
+  const socketRef = useRef<Socket | null>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
 
-  // Références pour les éléments DOM
-  const messagesEndRef = useRef<HTMLDivElement>(null); // Référence vers le bas des messages
-  const inputRef = useRef<HTMLTextAreaElement>(null); // Référence vers le champ de saisie
-  const fileInputRef = useRef<HTMLInputElement>(null); // Référence vers l'input fichier
-
-  // Fonction pour faire défiler vers le bas des messages
   const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, []);
 
-  // Effet pour scroller vers le bas quand les messages ou l'état de l'IA changent
   useEffect(() => {
+    console.log('[DEBUG] État messages mis à jour :', messages);
     scrollToBottom();
   }, [messages, isAiTyping, scrollToBottom]);
 
-  // Fonction pour récupérer les infos de l'utilisateur connecté
   const fetchUser = async () => {
     const token = localStorage.getItem("accessToken");
     const userId = localStorage.getItem("user");
@@ -96,25 +147,138 @@ const MainSession = ({
         }
       );
 
-      if (!response.ok) {
-        throw new Error("Erreur lors de la récupération de l'utilisateur");
-      }
+      if (!response.ok) throw new Error("Erreur lors de la récupération de l'utilisateur");
 
       const user = await response.json();
       setUsername(user.username);
       setEmail(user.email);
+      if (user.companyId) {
+        setCompanyId(user.companyId); // Définir companyId dynamiquement
+        console.log('[DEBUG] companyId récupéré:', user.companyId);
+      } else {
+        setCompanyId("cmbjatwo90000k8hk297pykwi"); // Fallback
+      }
     } catch (error) {
       console.error("Erreur lors de la récupération :", error);
       toast.error("Erreur lors de la récupération");
     }
   };
 
-  // Effet pour charger les infos utilisateur au montage du composant
   useEffect(() => {
     fetchUser();
   }, []);
 
-  // Fonction pour gérer la déconnexion
+  useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+    socketRef.current = io(getApiUrl(''), {
+      auth: { token: `Bearer ${token}` },
+    });
+
+    socketRef.current.on('connect', () => {
+      console.log('[DEBUG] Connecté au WebSocket:', socketRef.current?.id);
+      if (activeChatId) {
+        socketRef.current?.emit('joinChat', activeChatId);
+        console.log('[DEBUG] Rejoint le chat:', activeChatId);
+      }
+    });
+
+    socketRef.current.on('messageUpdate', (message: Message) => {
+      console.log('[DEBUG] Message WebSocket reçu (messageUpdate):', message);
+      setMessages((prev) => {
+        const updated = [...prev];
+        const index = updated.findIndex((m) => m.id === message.id);
+        if (index !== -1) {
+          updated[index] = {
+            id: message.id,
+            content: message.content,
+            sender: message.sender,
+            timestamp: new Date(message.createdAt || Date.now()),
+          };
+        } else {
+          updated.push({
+            id: message.id,
+            content: message.content,
+            sender: message.sender,
+            timestamp: new Date(message.createdAt || Date.now()),
+          });
+        }
+        return updated;
+      });
+      setIsAiTyping(message.sender === 'RAG' && message.content === '');
+    });
+
+    socketRef.current.on('messageChunk', ({ messageId, chunk }: { messageId: string; chunk: string }) => {
+      console.log('[DEBUG] Chunk WebSocket reçu:', { messageId, chunk });
+      setMessages((prev) => {
+        const updated = [...prev];
+        const index = updated.findIndex((m) => m.id === messageId);
+        if (index !== -1) {
+          updated[index] = {
+            ...updated[index],
+            content: updated[index].content + chunk,
+          };
+        } else {
+          updated.push({
+            id: messageId,
+            content: chunk,
+            sender: 'RAG',
+            timestamp: new Date(),
+          });
+        }
+        return updated;
+      });
+      setIsAiTyping(true);
+    });
+
+    socketRef.current.on('streamEnd', ({ messageId, message }: { messageId: string; message: Message }) => {
+      console.log('[DEBUG] Stream terminé (streamEnd):', { messageId, message });
+      setMessages((prev) => {
+        const updated = [...prev];
+        const index = updated.findIndex((m) => m.id === messageId);
+        if (index !== -1) {
+          updated[index] = {
+            id: message.id,
+            content: message.content,
+            sender: message.sender,
+            timestamp: new Date(message.createdAt || Date.now()),
+          };
+        }
+        return updated;
+      });
+      setIsAiTyping(false);
+    });
+
+    socketRef.current.on('streamError', ({ messageId, error }: { messageId: string; error: string }) => {
+      console.error('[ERREUR] Erreur WebSocket (streamError):', error);
+      toast.error(error || 'Erreur lors de la génération de la réponse');
+      setMessages((prev) => {
+        const updated = [...prev];
+        const index = updated.findIndex((m) => m.id === messageId);
+        if (index !== -1) {
+          updated[index] = {
+            ...updated[index],
+            content: 'Erreur : impossible de générer la réponse.',
+          };
+        }
+        return updated;
+      });
+      setIsAiTyping(false);
+    });
+
+    socketRef.current.on('disconnect', () => {
+      console.log('[DEBUG] Déconnecté du WebSocket');
+    });
+
+    socketRef.current.on('connect_error', (error) => {
+      console.error('[ERREUR] Erreur de connexion WebSocket:', error);
+      toast.error("Erreur de connexion au WebSocket");
+    });
+
+    return () => {
+      socketRef.current?.disconnect();
+    };
+  }, [activeChatId]);
+
   const handleLogout = () => {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("isAdmin");
@@ -122,64 +286,71 @@ const MainSession = ({
     window.location.href = "/pages/authentication/login";
   };
 
-  // Fonction pour envoyer un message au backend
-  const sendMessageToBackend = async (messageContent: string, file?: File) => {
+  const sendMessageToBackend = async (messageContent: string) => {
+    console.log('[DEBUG] Début de sendMessageToBackend - Message:', messageContent);
+
     const userId = localStorage.getItem("user");
     const token = localStorage.getItem("accessToken");
-
     if (!userId || !token) {
-      toast.error("Vous devez être connecté pour envoyer un message.");
+      console.error('[ERREUR] Identifiants manquants dans le localStorage');
+      toast.error("Session expirée, veuillez vous reconnecter");
+      handleLogout();
       return null;
     }
 
-    const headers = {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    };
-
-    let url = getApiUrl("/messages");
-    let body = JSON.stringify({
-      chatId: activeChatId,
-      sender: "USER",
-      content: messageContent,
+    const body = JSON.stringify({
+      userId,
+      question: messageContent,
+      companyId, // Utilise companyId dynamique
     });
-    let method = "POST";
 
-    // Si c'est un nouveau chat (pas d'ID et pas de messages)
-    if (!activeChatId && messages.length === 0) {
-      url = getApiUrl("/chats");
-      body = JSON.stringify({
-        userId: userId,
-        question: messageContent,
-      });
-    }
+    console.log('[DEBUG] Configuration requête:', { url: '/chats', method: "POST", body: JSON.parse(body) });
 
     try {
-      const response = await fetch(url, {
-        method: method,
-        headers: headers,
-        body: body,
+      const response = await fetch(getApiUrl('/chats'), {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body,
       });
 
       if (!response.ok) {
-        throw new Error(`Erreur HTTP: ${response.status}`);
+        const errorText = await response.text();
+        console.error('[ERREUR] Requête échouée:', response.status, errorText);
+        throw new Error(`Erreur HTTP: ${response.status} - ${errorText}`);
       }
 
-      const data = await response.json();
-      if (!activeChatId && messages.length === 0) {
-        setActiveChatId(data.id);
+      const responseData = await response.json();
+      console.log('[DEBUG] Réponse finale:', responseData);
+
+      if (responseData.chatResponse?.id) {
+        console.log('[DEBUG] Nouveau chat créé, ID:', responseData.chatResponse.id);
+        setActiveChatId(responseData.chatResponse.id);
+        socketRef.current?.emit('joinChat', responseData.chatResponse.id);
+        console.log('[DEBUG] Rejoint le chat via WebSocket:', responseData.chatResponse.id);
+        // Mettre à jour les messages avec la réponse initiale
+        setMessages(responseData.chatResponse.messages.map((msg: any) => ({
+          id: msg.id,
+          content: msg.content,
+          sender: msg.sender,
+          timestamp: new Date(msg.createdAt),
+        })));
       }
 
       fetchUserChats();
-      return data;
+      return responseData.chatResponse;
+
     } catch (error) {
-      console.error("Erreur lors de l'envoi du message :", error);
-      toast.error("Erreur lors de l'envoi du message");
+      console.error('[ERREUR] sendMessageToBackend:', error);
+      toast.error(
+        error instanceof Error ? error.message : "Erreur lors de l'envoi du message"
+      );
       return null;
     }
   };
 
-  // Fonction pour récupérer les messages d'un chat spécifique
   const fetchChatMessages = async (chatId: string) => {
     const token = localStorage.getItem("accessToken");
     const userId = localStorage.getItem("user");
@@ -190,7 +361,7 @@ const MainSession = ({
     }
 
     try {
-      const response = await fetch(`${getApiUrl(`/messages/${chatId}`)}`, {
+      const response = await fetch(`${getApiUrl(`/chats/${chatId}`)}`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -198,80 +369,70 @@ const MainSession = ({
       });
 
       if (!response.ok) {
+        const errorText = await response.text();
+        console.error('[ERREUR] fetchChatMessages échoué:', response.status, errorText);
         throw new Error("Erreur lors de la récupération des messages");
       }
 
-      const messages = await response.json();
-      setMessages(messages);
+      const chat = await response.json();
+      console.log('[DEBUG] Chat récupéré via fetchChatMessages :', chat);
+      setMessages(chat.messages.map((msg: any) => ({
+        id: msg.id,
+        content: msg.content,
+        sender: msg.sender,
+        timestamp: new Date(msg.createdAt),
+      })));
     } catch (error) {
       console.error("Erreur lors de la récupération des messages :", error);
       toast.error("Erreur lors de la récupération des messages");
     }
   };
 
-  // Effet pour charger les messages quand le chat actif change
   useEffect(() => {
+    console.log('[DEBUG] activeChatId changé :', activeChatId);
     if (activeChatId) {
       fetchChatMessages(activeChatId);
+      socketRef.current?.emit('joinChat', activeChatId);
+      console.log('[DEBUG] Rejoint le chat:', activeChatId);
+    } else {
+      setMessages([]);
     }
   }, [activeChatId]);
 
-  // Fonction principale pour envoyer un message
   const handleSendMessage = async () => {
-    if (!inputValue.trim() && !selectedFile) return;
+    if (!inputValue.trim()) return;
 
-    // Génération d'un ID temporaire pour le message utilisateur
     const tempId = uuidv4();
-    let messageContent = inputValue.trim();
-    
-    // Ajout du nom du fichier si un fichier est joint
-    if (selectedFile) {
-      messageContent += messageContent
-        ? `\n\nFichier joint: ${selectedFile.name}`
-        : `Fichier joint: ${selectedFile.name}`;
-    }
-
-    // Création du message utilisateur
     const userMessage: Message = {
       id: tempId,
-      content: messageContent,
+      content: inputValue.trim(),
       sender: "USER",
       timestamp: new Date(),
     };
 
-    // Ajout du message à la liste
+    console.log('[DEBUG] Ajout message utilisateur :', userMessage);
     setMessages((prev) => [...prev, userMessage]);
     setInputValue("");
-    setSelectedFile(null);
     setIsAiTyping(true);
 
-    // Envoi du message au backend
-    const aiResponse = await sendMessageToBackend(messageContent, selectedFile);
+    const typingTimeout = setTimeout(() => {
+      setIsAiTyping(false);
+      toast.error('Aucune réponse reçue du serveur après 30 secondes');
+    }, 30000);
 
-    if (aiResponse) {
-      // Création de la réponse de l'IA
-      const aiMessage: Message = {
-        id: aiResponse.id,
-        content: aiResponse.content,
-        sender: "ai",
-        timestamp: new Date(),
-      };
-      
-      // Mise à jour de l'ID du message utilisateur si le backend a retourné un ID
-      const updatedMessages = messages.map((msg) =>
-        msg.id === tempId
-          ? { ...msg, id: aiResponse.userMessageIdFromBackend || msg.id }
-          : msg
-      );
-      
-      // Ajout du message de l'IA
-      setMessages([...updatedMessages, aiMessage]);
+    try {
+      const response = await sendMessageToBackend(inputValue.trim());
+      if (response) {
+        clearTimeout(typingTimeout);
+      }
+    } catch (error) {
+      console.error('[ERREUR] handleSendMessage :', error);
+      toast.error("Erreur de communication avec le serveur");
+      clearTimeout(typingTimeout);
+      setIsAiTyping(false);
     }
-
-    setIsAiTyping(false);
   };
 
-  // Gestion de la touche Entrée pour envoyer le message
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
@@ -279,18 +440,6 @@ const MainSession = ({
     }
   };
 
-  // Gestion de l'upload de fichier
-  const handleFileUpload = () => {
-    fileInputRef.current?.click();
-  };
-
-  // Gestion du changement de fichier sélectionné
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) setSelectedFile(file);
-  };
-
-  // Basculer entre l'état d'enregistrement vocal
   const toggleRecording = () => {
     if (isRecording) {
       setIsRecording(false);
@@ -300,16 +449,13 @@ const MainSession = ({
     }
   };
 
-  // Rendu du composant
   return (
     <div className="flex flex-col h-screen bg-white">
-      {/* En-tête avec le titre et le profil utilisateur */}
       <div className="p-4 border-b border-gray-200 flex items-center justify-between">
         <h1 className="righteous text-xl font-semibold text-gray-800">
           Perfect Research
         </h1>
         
-        {/* Menu profil utilisateur */}
         <div className="relative">
           <button 
             onClick={() => setIsProfileOpen(!isProfileOpen)}
@@ -318,37 +464,18 @@ const MainSession = ({
             <CircleUserRound className="text-gray-700" size={25} />
           </button>
           
-          {/* Dropdown du profil */}
-          {isProfileOpen && (
-            <div className="absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg z-50 border border-gray-200">
-              <div className="p-4 border-b border-gray-200">
-                <h3 className="font-medium text-gray-900">Mon Profil</h3>
-              </div>
-              <div className="p-4">
-                <div className="mb-3">
-                  <p className="text-sm text-gray-500">Nom d'utilisateur</p>
-                  <p className="font-medium">{username || "Chargement..."}</p>
-                </div>
-                <div className="mb-4">
-                  <p className="text-sm text-gray-500">Email</p>
-                  <p className="font-medium">{email || "Chargement..."}</p>
-                </div>
-                <button
-                  onClick={handleLogout}
-                  className="w-full py-2 px-4 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
-                >
-                  Déconnexion
-                </button>
-              </div>
-            </div>
-          )}
+          <ProfilDropdown
+            isProfileOpen={isProfileOpen}
+            setIsProfileOpen={setIsProfileOpen}
+            username={username}
+            email={email}
+            handleLogout={handleLogout}
+          />
         </div>
       </div>
 
-      {/* Zone principale des messages */}
       <div className="flex-1 overflow-y-auto p-4 md:px-6">
         {messages.length === 0 ? (
-          // Vue quand il n'y a pas de messages (premier chargement)
           <div className="h-full flex flex-col items-center justify-center">
             <div className="max-w-md text-center space-y-4">
               <div className="mb-4">
@@ -366,35 +493,37 @@ const MainSession = ({
             </div>
           </div>
         ) : (
-          // Liste des messages
           <div className="space-y-6 pt-4 pb-20">
-            {messages.map((message) => (
-              <div
-                key={message.id || uuidv4()} // Clé unique pour chaque message
-                className={`flex ${
-                  message.sender === "USER" ? "justify-end" : "justify-start"
-                }`}
-              >
-                {/* Bulle de message */}
+            {messages.map((message) => {
+              console.log('[DEBUG] Rendu message :', message);
+              return (
                 <div
-                  className={`max-w-[70%] rounded-2xl px-4 py-3 ${
-                    message.sender === "USER"
-                      ? "bg-blue-400 text-white"
-                      : "bg-gray-200 text-gray-800"
+                  key={message.id}
+                  className={`flex ${
+                    message.sender === "USER" ? "justify-end" : "justify-start"
                   }`}
                 >
-                  <p className="whitespace-pre-wrap">{message.content}</p>
-                  <div className="text-xs mt-1 opacity-70 text-right">
-                    {new Date(message.timestamp).toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
+                  <div
+                    className={`max-w-[70%] rounded-2xl px-4 py-3 ${
+                      message.sender === "USER"
+                        ? "bg-blue-400 text-white"
+                        : "bg-gray-200 text-gray-800"
+                    }`}
+                  >
+                    <p className="whitespace-pre-wrap">
+                      {message.content || (message.sender === 'RAG' && isAiTyping ? 'En cours de génération...' : 'Aucune réponse')}
+                    </p>
+                    <div className="text-xs mt-1 opacity-70 text-right">
+                      {new Date(message.timestamp).toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
             
-            {/* Indicateur quand l'IA est en train de répondre */}
             {isAiTyping && (
               <div className="flex justify-start">
                 <div className="bg-gray-200 text-gray-800 rounded-2xl px-4 py-3 max-w-[200px]">
@@ -405,41 +534,14 @@ const MainSession = ({
               </div>
             )}
             
-            {/* Référence pour le scroll automatique */}
             <div ref={messagesEndRef} />
           </div>
         )}
       </div>
 
-      {/* Zone de saisie des messages */}
       <div className="p-4 border-t border-gray-200 bg-white">
         <div className="max-w-3xl mx-auto">
           <div className="relative bg-gray-100 rounded-xl border border-gray-300 shadow-sm p-2">
-            {/* Input fichier caché */}
-            <input
-              type="file"
-              ref={fileInputRef}
-              onChange={handleFileChange}
-              className="hidden"
-            />
-            
-            {/* Affichage du fichier sélectionné */}
-            {selectedFile && (
-              <div className="px-4 pt-3 flex items-center gap-2">
-                <FaPaperclip size={14} className="text-blue-500" />
-                <span className="text-sm text-gray-800 truncate">
-                  {selectedFile.name}
-                </span>
-                <button
-                  onClick={() => setSelectedFile(null)}
-                  className="hover:bg-gray-200 p-1 rounded-full"
-                >
-                  <FaTimes size={14} />
-                </button>
-              </div>
-            )}
-            
-            {/* Zone de texte principale */}
             <textarea
               ref={inputRef}
               value={inputValue}
@@ -451,20 +553,12 @@ const MainSession = ({
               placeholder="Écrivez votre message ici..."
             />
 
-            {/* Boutons à gauche */}
             <div className="absolute left-2 bottom-2 flex gap-2">
               <button className="p-2 rounded-full bg-gray-200 hover:bg-gray-300">
                 <FaGlobe size={16} />
               </button>
-              <button
-                onClick={handleFileUpload}
-                className="p-2 rounded-full bg-gray-200 hover:bg-gray-300"
-              >
-                <FaPaperclip size={16} />
-              </button>
             </div>
 
-            {/* Boutons à droite */}
             <div className="absolute right-2 bottom-2 flex gap-2">
               <button
                 onClick={toggleRecording}
@@ -481,9 +575,9 @@ const MainSession = ({
               </button>
               <button
                 onClick={handleSendMessage}
-                disabled={!inputValue.trim() && !selectedFile}
+                disabled={!inputValue.trim()}
                 className={`p-2 rounded-full ${
-                  inputValue.trim() || selectedFile
+                  inputValue.trim()
                     ? "bg-blue-400 text-white hover:bg-blue-500"
                     : "bg-gray-200 text-gray-500"
                 }`}

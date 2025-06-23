@@ -59,36 +59,89 @@ const Page = () => {
 
 
 
+// const checkUserProfileStatus = async () => {
+//   try {
+//     const response = await fetch(`${getApiUrl(`/user/${userIdStored}`)}`, {
+//       headers: {
+//         Authorization: `Bearer ${accessToken}`,
+//       },
+//     });
+
+//     if (!response.ok) {
+//       throw new Error("Erreur lors de la récupération du profil utilisateur");
+//     }
+
+//     const text = await response.text();
+//     const userData = text ? JSON.parse(text) : null;
+
+//     if (!userData) {
+//       throw new Error("Réponse vide du serveur");
+//     }
+
+//     const isAdmin = userData.role === "ADMIN";
+//     const isProfileComplete = userData.isProfileComplete;
+
+//     if (!isAdmin && !isProfileComplete) {
+//       setShowProfilePopup(true);
+//     }
+
+//     setIsLoading(false);
+//   } catch (error) {
+//     console.error("Erreur :", error);
+//     toast.error("Impossible de vérifier le profil utilisateur");
+//   }
+// };
+
+
+
 const checkUserProfileStatus = async () => {
   try {
+    if (!accessToken) {
+      toast.error("Session expirée");
+      redirect("/login");
+      return;
+    }
+
     const response = await fetch(`${getApiUrl(`/user/${userIdStored}`)}`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
+      headers: { Authorization: `Bearer ${accessToken}` },
     });
 
+    // Vérification du statut HTTP
     if (!response.ok) {
-      throw new Error("Erreur lors de la récupération du profil utilisateur");
+      const errorText = await response.text();
+      throw new Error(errorText || `HTTP ${response.status}`);
     }
 
-    const text = await response.text();
-    const userData = text ? JSON.parse(text) : null;
+    // Vérification du Content-Type
+    const contentType = response.headers.get("Content-Type");
+    if (!contentType?.includes("application/json")) {
+      throw new Error("Le serveur n'a pas renvoyé de JSON");
+    }
+
+    // Extraction des données
+    const userData = await response.json();
 
     if (!userData) {
-      throw new Error("Réponse vide du serveur");
+      throw new Error("Données utilisateur manquantes");
     }
 
+    // Traitement des données...
     const isAdmin = userData.role === "ADMIN";
     const isProfileComplete = userData.isProfileComplete;
 
     if (!isAdmin && !isProfileComplete) {
       setShowProfilePopup(true);
     }
-
-    setIsLoading(false);
   } catch (error) {
     console.error("Erreur :", error);
-    toast.error("Impossible de vérifier le profil utilisateur");
+    toast.error(error instanceof Error ? error.message : "Erreur inconnue");
+
+    // Redirection si token invalide
+    if (error.message.includes("401")) {
+      redirect("/login");
+    }
+  } finally {
+    setIsLoading(false);
   }
 };
 

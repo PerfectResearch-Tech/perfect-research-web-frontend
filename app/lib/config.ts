@@ -7,3 +7,4 @@ const BASE_API_URL = "https://perfectresearch-api.dev.perfectresearch.app" ;
 
 // Fonction pour générer l'URL complète avec un endpoint dynamique
 export const getApiUrl = (endpoint: string) => `${BASE_API_URL}${endpoint}`;
+
