@@ -12,9 +12,9 @@ function HomeHeader() {
     setIsOpen(!isOpen);
   };
 
-  const closeDropdown = () => {
-    setIsOpen(false);
-  };
+  // const closeDropdown = () => {
+  //   setIsOpen(false);
+  // };
 
   const toggleMobileMenu = (e: React.MouseEvent) => {
     e.stopPropagation(); // Empêche la propagation pour éviter que useEffect ne ferme immédiatement
@@ -147,30 +147,33 @@ function HomeHeader() {
           />
         </div>
 
-        <button
-          id="mobileMenuButton"
-          className="text-black focus:outline-none "
-          onClick={toggleMobileMenu}
-        >
-          <svg
-            className="w-6 h-6"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d={
-                isMobileMenuOpen
-                  ? "M6 18L18 6M6 6l12 12"
-                  : "M4 6h16M4 12h16M4 18h16"
-              }
-            />
-          </svg>
-        </button>
+<button
+  id="mobileMenuButton"
+  type="button"
+  className="text-black focus:outline-none"
+  onClick={toggleMobileMenu}
+  aria-label={isMobileMenuOpen ? "Fermer le menu mobile" : "Ouvrir le menu mobile"}
+>
+  <svg
+    className="w-6 h-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+      d={
+        isMobileMenuOpen
+          ? "M6 18L18 6M6 6l12 12"
+          : "M4 6h16M4 12h16M4 18h16"
+      }
+    />
+  </svg>
+</button>
+
       </div>
 
       {/* Menu déroulant mobile */}

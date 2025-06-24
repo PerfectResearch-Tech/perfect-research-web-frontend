@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { CircleUserRound } from "lucide-react";
 import { toast, Toaster } from "sonner";
 import Image from "next/image";
@@ -11,6 +11,7 @@ import SystemCountries from "@/app/includes/system/SystemCountries";
 import SystemDiscipline from "@/app/includes/system/SystemDiscipline";
 import DocumentsMain from "@/app/includes/docs/DocumentsMain";
 import UsersMainItems from "@/app/includes/users/UsersMainItems";
+import { DataItem, YearData, UniversityData, CountryData, DisciplineData, UserData } from "@/app/types";
 
 type MainSessionProps = {
   selectedItem: string;
@@ -23,13 +24,12 @@ const MainSession: React.FC<MainSessionProps> = ({ selectedItem }) => {
   const [university, setUniversity] = useState("");
   const [country, setCountry] = useState("");
   const [discipline, setDiscipline] = useState("");
-  const [users, setUsers] = useState("");
   const [error, setError] = useState("");
-  const [datas, setDatas] = useState<any[]>([]);
+  const [datas, setDatas] = useState<DataItem[]>([]);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
-  const [companyId, setCompanyId] = useState<string>(""); // Ajout de companyId
+  const [companyId, setCompanyId] = useState<string>("");
 
   const fetchUser = async () => {
     const token = localStorage.getItem("accessToken");
@@ -63,7 +63,7 @@ const MainSession: React.FC<MainSessionProps> = ({ selectedItem }) => {
       console.log("[DEBUG] Données utilisateur reçues:", user);
       setUsername(user.username || "");
       setEmail(user.email || "");
-      setCompanyId(user.companyId || ""); // Stockage de companyId
+      setCompanyId(user.companyId || "");
       if (!user.companyId) {
         console.warn("[DEBUG] Aucun companyId trouvé dans la réponse");
         toast.error("L'identifiant de l'entreprise est manquant.");
@@ -88,7 +88,7 @@ const MainSession: React.FC<MainSessionProps> = ({ selectedItem }) => {
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setIsLoading(true);
     const token = localStorage.getItem("accessToken");
 
@@ -151,13 +151,13 @@ const MainSession: React.FC<MainSessionProps> = ({ selectedItem }) => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [selectedItem]);
 
   useEffect(() => {
     if (selectedItem) {
       fetchData();
     }
-  }, [selectedItem]);
+  }, [selectedItem, fetchData]);
 
   const handlerSubmit = async () => {
     setIsLoading(true);
@@ -187,10 +187,6 @@ const MainSession: React.FC<MainSessionProps> = ({ selectedItem }) => {
         break;
       case "Disciplines":
         inputValue = discipline;
-        fieldName = "name";
-        break;
-      case "Utilisateurs":
-        inputValue = users;
         fieldName = "name";
         break;
       default:
@@ -228,9 +224,6 @@ const MainSession: React.FC<MainSessionProps> = ({ selectedItem }) => {
         break;
       case "Disciplines":
         endpoint = "/admin/discipline";
-        break;
-      case "Utilisateurs":
-        endpoint = "/admin/users";
         break;
       default:
         setError("Aucune option valide sélectionnée");
@@ -284,7 +277,7 @@ const MainSession: React.FC<MainSessionProps> = ({ selectedItem }) => {
   const renderContent = () => {
     switch (selectedItem) {
       case "Documents":
-        return <DocumentsMain companyId={companyId} />; // Passage de companyId
+        return <DocumentsMain companyId={companyId} />;
       case "Années":
         return isLoading ? (
           <Loading />
@@ -295,8 +288,8 @@ const MainSession: React.FC<MainSessionProps> = ({ selectedItem }) => {
                 { key: "year", label: "Année", sortable: true },
                 { key: "actions", label: "Actions" },
               ]}
-              data={datas}
-              renderRow={(year) => (
+              data={datas as YearData[]}
+              renderRow={(year: YearData) => (
                 <>
                   <td>{year.year}</td>
                   <td>
@@ -320,8 +313,8 @@ const MainSession: React.FC<MainSessionProps> = ({ selectedItem }) => {
               { key: "name", label: "Université", sortable: true },
               { key: "actions", label: "Actions" },
             ]}
-            data={datas}
-            renderRow={(university) => (
+            data={datas as UniversityData[]}
+            renderRow={(university: UniversityData) => (
               <>
                 <td>{university.name}</td>
                 <td>
@@ -344,8 +337,8 @@ const MainSession: React.FC<MainSessionProps> = ({ selectedItem }) => {
               { key: "name", label: "Discipline", sortable: true },
               { key: "actions", label: "Actions" },
             ]}
-            data={datas}
-            renderRow={(discipline) => (
+            data={datas as DisciplineData[]}
+            renderRow={(discipline: DisciplineData) => (
               <>
                 <td>{discipline.name}</td>
                 <td>
@@ -368,8 +361,8 @@ const MainSession: React.FC<MainSessionProps> = ({ selectedItem }) => {
               { key: "name", label: "Pays", sortable: true },
               { key: "actions", label: "Actions" },
             ]}
-            data={datas}
-            renderRow={(country) => (
+            data={datas as CountryData[]}
+            renderRow={(country: CountryData) => (
               <>
                 <td>{country.name}</td>
                 <td>
@@ -396,8 +389,8 @@ const MainSession: React.FC<MainSessionProps> = ({ selectedItem }) => {
               { key: "lastLogin", label: "Dernière connexion", sortable: true },
               { key: "actions", label: "Actions" },
             ]}
-            data={datas}
-            renderRow={(user) => (
+            data={datas as UserData[]}
+            renderRow={(user: UserData) => (
               <>
                 <td>{user.username}</td>
                 <td>{user.email}</td>
@@ -440,8 +433,10 @@ const MainSession: React.FC<MainSessionProps> = ({ selectedItem }) => {
         
         <div className="relative">
           <button 
+            type="button"
             onClick={() => setIsProfileOpen(!isProfileOpen)}
             className="p-2 rounded-full hover:bg-gray-100"
+            aria-label="Ouvrir le profil utilisateur"
           >
             <CircleUserRound className="text-gray-700" size={24} />
           </button>
@@ -453,7 +448,7 @@ const MainSession: React.FC<MainSessionProps> = ({ selectedItem }) => {
               </div>
               <div className="p-4">
                 <div className="mb-3">
-                  <p className="text-sm text-gray-500">Nom d'utilisateur</p>
+                  <p className="text-sm text-gray-500">Nom d&lsquo;utilisateur</p>
                   <p className="font-medium">{username || "Chargement..."}</p>
                 </div>
                 <div className="mb-4">
@@ -461,6 +456,7 @@ const MainSession: React.FC<MainSessionProps> = ({ selectedItem }) => {
                   <p className="font-medium">{email || "Chargement..."}</p>
                 </div>
                 <button
+                  type="button"
                   onClick={handleLogout}
                   className="w-full py-2 px-4 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
                 >
@@ -476,13 +472,13 @@ const MainSession: React.FC<MainSessionProps> = ({ selectedItem }) => {
         <div className="flex justify-between px-6 mb-4">
           <h3 className="quicksand-bold">Liste des {selectedItem}</h3>
           {selectedItem !== "Utilisateurs" && (
-            <button onClick={openModal}>
-              <Image
-                src={"/assets/icons/plus.png"}
-                alt="Ajouter"
-                height={20}
-                width={20}
-              />
+            <button
+              type="button"
+              onClick={openModal}
+              aria-label="Ajouter une nouvelle catégorie"
+              className="p-2 rounded-full hover:bg-gray-100"
+            >
+              <Image src="/assets/icons/plus.png" alt="Ajouter" height={20} width={20} />
             </button>
           )}
         </div>
@@ -513,9 +509,7 @@ const MainSession: React.FC<MainSessionProps> = ({ selectedItem }) => {
               {error && <p className="text-red-500 text-center">{error}</p>}
               <br />
               <input
-                type={
-                  selectedItem === "Années" ? "number" : "text"
-                }
+                type={selectedItem === "Années" ? "number" : "text"}
                 className="w-full p-4 border"
                 placeholder={
                   selectedItem === "Années"
@@ -555,16 +549,16 @@ const MainSession: React.FC<MainSessionProps> = ({ selectedItem }) => {
 
             <div className="flex shrink-0 flex-wrap items-center pt-4 justify-end">
               <button
+                type="button"
                 onClick={closeModal}
                 className="rounded-md border border-transparent py-2 px-4 text-center text-sm transition-all text-slate-600 hover:bg-slate-100 focus:bg-slate-100 active:bg-slate-100 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-                type="button"
               >
                 Annuler
               </button>
               <button
+                type="submit"
                 onClick={handlerSubmit}
                 className="rounded-md btn btn-primary py-2 px-4 border border-transparent text-center text-sm transition-all shadow-md hover:shadow-lg focus:bg-green-700 focus:shadow-none active:bg-green-700 hover:bg-green-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none ml-2"
-                type="button"
               >
                 Ajouter
               </button>

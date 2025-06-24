@@ -2,14 +2,14 @@ import React from "react";
 
 const SelectCountryOption = ({
   label,
-  countries,
+  
   defaultOption,
   selectedOption,
   handleChange,
   datas,
 }: {
   label: string;
-  countries: any;
+
   defaultOption: string;
   selectedOption: string;
   handleChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;

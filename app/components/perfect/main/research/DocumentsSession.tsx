@@ -20,7 +20,7 @@ const DocumentsSession = ({
   discipline: string;
   university: string;
   country: string;
-  path: any;
+  path: string;
 }) => {
   const handleDownload = async () => {
     try {
@@ -72,7 +72,12 @@ const DocumentsSession = ({
           <p className="regular">Discipline : {discipline}</p>
           <p className="regular">Université : {university}</p>
           <p className="regular">Pays : {country}</p>
-          <button onClick={handleDownload} className="text-primary">
+          <button
+            type="button"
+            onClick={handleDownload}
+            aria-label="Télécharger le document"
+            className="text-primary"
+          >
             <FaDownload />
           </button>
         </div>

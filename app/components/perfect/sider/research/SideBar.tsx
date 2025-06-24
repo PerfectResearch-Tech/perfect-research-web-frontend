@@ -3,40 +3,50 @@ import React, { useEffect, useState } from "react";
 import "../sider.css";
 import { getApiUrl } from "@/app/lib/config";
 
-const SideBar = ({
-  handlerCurrentData,
-}: {
-  handlerCurrentData: (data: any) => void;
-}) => {
-  const [years, setYears] = useState<number[]>([]);
-  const [universities, setUniversities] = useState<any[]>([]);
-  const [countries, setCountries] = useState<any[]>([]);
-  const [disciplines, setDisciplines] = useState<any[]>([]);
-  const [types, setTypes] = useState<any[]>([]);
-  const [authors, setAuthors] = useState<any[]>([]);
+// Types pour les données
+interface NamedEntity {
+  id: string;
+  name: string;
+}
+
+interface YearEntity {
+  id: string;
+  year: number;
+}
+
+interface SideBarProps {
+  handlerCurrentData: (data: {
+    yearId: string | null;
+    documentTypeId: string | null;
+    author: string | null;
+    universityId: string | null;
+    disciplineId: string | null;
+    countryId: string | null;
+  }) => void;
+}
+
+const SideBar: React.FC<SideBarProps> = ({ handlerCurrentData }) => {
+  const [years, setYears] = useState<YearEntity[]>([]);
+  const [universities, setUniversities] = useState<NamedEntity[]>([]);
+  const [countries, setCountries] = useState<NamedEntity[]>([]);
+  const [disciplines, setDisciplines] = useState<NamedEntity[]>([]);
+  const [types, setTypes] = useState<NamedEntity[]>([]);
+  const [authors, setAuthors] = useState<string[]>([]);
 
   const [selectedYear, setSelectedYear] = useState<string | null>(null);
   const [selectedAuthor, setSelectedAuthor] = useState<string | null>(null);
-  const [selectedUniversity, setSelectedUniversity] = useState<string | null>(
-    null
-  );
-  const [selectedDiscipline, setSelectedDiscipline] = useState<string | null>(
-    null
-  );
+  const [selectedUniversity, setSelectedUniversity] = useState<string | null>(null);
+  const [selectedDiscipline, setSelectedDiscipline] = useState<string | null>(null);
   const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
   const [selectedType, setSelectedType] = useState<string | null>(null);
 
   const fetchAllData = async () => {
-    // Récupérer le token depuis le localStorage
     const token = localStorage.getItem("accessToken");
-
-    // Vérifier que le token est présent
     if (!token) {
       console.error("Vous devez être connecté pour effectuer cette action.");
       return;
     }
 
-    // Définir les endpoints pour chaque type de données
     const endpoints = [
       { name: "years", url: "/admin/years" },
       { name: "universities", url: "/admin/universities" },
@@ -46,7 +56,8 @@ const SideBar = ({
       { name: "author", url: "/document/authors" },
     ];
 
-    // Objet pour stocker les données récupérées
+
+    
     const allData: Record<string, any[]> = {
       years: [],
       universities: [],
@@ -57,53 +68,32 @@ const SideBar = ({
     };
 
     try {
-      // Parcourir chaque endpoint et récupérer les données
       for (const endpoint of endpoints) {
-        const response = await fetch(
-          // `http://192.168.1.205:3001${endpoint.url}`,
-          `${getApiUrl(endpoint.url)}`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`, // Ajouter le token dans les en-têtes
-            },
-          }
-        );
+        const response = await fetch(`${getApiUrl(endpoint.url)}`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
-        // Vérifier si la requête a réussi
         if (!response.ok) {
-          throw new Error(
-            `Erreur lors de la récupération des ${endpoint.name}`
-          );
+          throw new Error(`Erreur lors de la récupération des ${endpoint.name}`);
         }
 
-        // Ajouter les données récupérées à l'objet allData
         const data = await response.json();
         allData[endpoint.name] = data;
       }
 
-      // Afficher les données récupérées dans la console
-      // console.log("Données récupérées avec succès :", allData);
-
       setCountries(allData.countries);
-      // console.log("allData.countries", allData.countries);
       setDisciplines(allData.disciplines);
-      // console.log("allData.disciplines", allData.disciplines);
       setTypes(allData.types);
-      // console.log("allData.types", allData.types);
       setUniversities(allData.universities);
-      // console.log("allData.universities", allData.universities);
       setYears(allData.years);
-      // console.log("allData.years", allData.years);
       setAuthors(allData.author);
-      // console.log("allData.author", allData.author);
 
-      // Retourner les données pour une utilisation ultérieure
       return allData;
     } catch (error) {
       console.error("Erreur lors de la récupération des données :", error);
-
-      // Afficher un message d'erreur à l'utilisateur
       if (error instanceof Error) {
         console.error(error.message);
       } else {
@@ -116,7 +106,6 @@ const SideBar = ({
     fetchAllData();
   }, []);
 
-  // Gestionnaire d'événements pour le changement de sélection
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const { id, value } = event.target;
 
@@ -155,20 +144,15 @@ const SideBar = ({
     <section className="sider-bar px-5 py-10 w-full md:w-80 bg-gray-800 text-white min-h-screen md:min-h-0">
       <div>
         <form className="max-w-sm mx-auto regular">
-          {/* <label
-            htmlFor="countries"
-            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-          >
-            Select an option
-          </label> */}
           <select
             id="DocType"
+            aria-label="Type de document"
             className="py-5 bg-gray-50 border border-gray-300 text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500 quicksand-bold"
             onChange={handleChange}
             value={selectedType || ""}
           >
             <option value="">Type de doc</option>
-            {types.map((type: any) => (
+            {types.map((type) => (
               <option key={type.id} value={type.id}>
                 {type.name}
               </option>
@@ -180,12 +164,13 @@ const SideBar = ({
 
           <select
             id="years"
+            aria-label="Year"
             className="py-5 bg-gray-50 border border-gray-300 text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500 quicksand-bold"
             onChange={handleChange}
             value={selectedYear || ""}
           >
             <option value="">Années</option>
-            {years.map((year: any) => (
+            {years.map((year) => (
               <option key={year.id} value={year.id}>
                 {year.year}
               </option>
@@ -196,6 +181,7 @@ const SideBar = ({
           <br />
           <select
             id="authors"
+             aria-label="Sélectionner un auteur"
             className="py-5 bg-gray-50 border border-gray-300 text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500 quicksand-bold"
             onChange={handleChange}
             value={selectedAuthor || ""}
@@ -211,11 +197,11 @@ const SideBar = ({
           <br />
           <br />
 
-          {/* Sélection des universités */}
           <select
             id="universities"
+             aria-label="Sélectionner une Université"
+
             className="py-5 bg-gray-50 border border-gray-300 text-gray-900 text-sm focus:ring-blue-700 focus:border-blue-700 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500 quicksand-bold"
-            // onChange={(e) => handleChange(e)}
             onChange={handleChange}
             value={selectedUniversity || ""}
           >
@@ -230,9 +216,10 @@ const SideBar = ({
           <br />
           <br />
 
-          {/* Sélection des disciplines */}
           <select
             id="disciplines"
+             aria-label="Sélectionner une discipline"
+
             className="py-5 bg-gray-50 border border-gray-300 text-gray-900 text-sm focus:ring-blue-700 focus:border-blue-700 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500 quicksand-bold"
             onChange={handleChange}
             value={selectedDiscipline || ""}
@@ -248,9 +235,10 @@ const SideBar = ({
           <br />
           <br />
 
-          {/* Sélection des pays */}
           <select
             id="countries"
+             aria-label="Sélectionner un pays"
+
             className="py-5 bg-gray-50 border border-gray-300 text-gray-900 text-sm focus:ring-blue-700 focus:border-blue-700 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500 quicksand-bold"
             onChange={handleChange}
             value={selectedCountry || ""}

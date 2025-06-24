@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import "../main.css";
 import DocumentsSession from "./DocumentsSession";
 import { toast } from "sonner";
@@ -20,8 +20,12 @@ interface DocumentType {
   path: string;
 }
 
+interface FilterData {
+  [key: string]: string | number | null | undefined;
+}
+
 interface Props {
-  data: any;
+  data: FilterData;
 }
 
 const MainSession = ({ data }: Props) => {
@@ -29,9 +33,7 @@ const MainSession = ({ data }: Props) => {
   const [documents, setDocuments] = useState<DocumentType[]>([]);
   const [types, setTypes] = useState<{ [key: string]: string }>({});
   const [disciplines, setDisciplines] = useState<{ [key: string]: string }>({});
-  const [universities, setUniversities] = useState<{ [key: string]: string }>(
-    {}
-  );
+  const [universities, setUniversities] = useState<{ [key: string]: string }>({});
   const [countries, setCountries] = useState<{ [key: string]: string }>({});
   const [years, setYears] = useState<{ [key: string]: number }>({});
   const [searchQuery, setSearchQuery] = useState("");
@@ -57,7 +59,6 @@ const MainSession = ({ data }: Props) => {
 
     try {
       const response = await fetch(
-        // `http://192.168.1.205:3001${endpoint}/${id}`,
         `${getApiUrl(endpoint)}/${id}`,
         {
           method: "GET",
@@ -81,7 +82,7 @@ const MainSession = ({ data }: Props) => {
     }
   };
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setIsLoading(true);
     const token = localStorage.getItem("accessToken");
 
@@ -92,9 +93,7 @@ const MainSession = ({ data }: Props) => {
 
     try {
       const response = await fetch(
-        // "http://192.168.1.205:3001/document"
         `${getApiUrl("/document")}`,
-
         {
           method: "GET",
           headers: {
@@ -109,8 +108,6 @@ const MainSession = ({ data }: Props) => {
 
       const data = await response.json();
       setDocuments(data);
-
-      console.log("Données récupérées :", data);
 
       for (const document of data) {
         if (document.documentTypeId) {
@@ -179,14 +176,14 @@ const MainSession = ({ data }: Props) => {
         }
       }
     } catch (error) {
-      // console.error("Erreur lors de la récupération des données :", error);
+      console.error("Erreur lors de la récupération des données :", error);
       toast.error("Erreur lors de la récupération des données");
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
-  const fetchFilterdData = async (filterData: any) => {
+  const fetchFilterdData = useCallback(async (filterData: FilterData) => {
     setIsLoading(true);
     const token = localStorage.getItem("accessToken");
 
@@ -197,9 +194,7 @@ const MainSession = ({ data }: Props) => {
 
     try {
       const response = await fetch(
-        // "http://192.168.1.205:3001/document/search",
         `${getApiUrl("/document/search")}`,
-
         {
           method: "POST",
           headers: {
@@ -215,7 +210,6 @@ const MainSession = ({ data }: Props) => {
       }
 
       const result = await response.json();
-      // console.log("Voici ma réponse de filter", result);
       setDocuments(result);
 
       for (const document of result) {
@@ -248,7 +242,7 @@ const MainSession = ({ data }: Props) => {
             document.universityId
           );
           if (universityDetails) {
-            setDisciplines((prev) => ({
+            setUniversities((prev) => ({
               ...prev,
               [document.universityId]: universityDetails.name,
             }));
@@ -269,15 +263,15 @@ const MainSession = ({ data }: Props) => {
         }
       }
     } catch (error) {
-      // console.error("Erreur lors de la récupération des données :", error);
+      console.error("Erreur lors de la récupération des données :", error);
       toast.error("Erreur lors de la récupération des données");
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [types, disciplines, universities, years]);
 
   // Nouvelle fonction pour la recherche par mots-clés
-  const fetchSearchKeywords = async (keywords: string) => {
+  const fetchSearchKeywords = useCallback(async (keywords: string) => {
     setIsLoading(true);
 
     if (!keywords) {
@@ -294,7 +288,6 @@ const MainSession = ({ data }: Props) => {
 
     try {
       const response = await fetch(
-        // "http://192.168.1.205:3001/document/search-keyword",
         `${getApiUrl("/document/search-keyword")}`,
         {
           method: "POST",
@@ -302,7 +295,7 @@ const MainSession = ({ data }: Props) => {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ keyword: keywords }), // Envoyer les mots-clés de recherche
+          body: JSON.stringify({ keyword: keywords }),
         }
       );
 
@@ -313,31 +306,32 @@ const MainSession = ({ data }: Props) => {
       const result = await response.json();
       setDocuments(result);
     } catch (error) {
+      console.error("Erreur lors de la recherche par mots-clés :", error);
       toast.error("Erreur lors de la recherche par mots-clés");
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [fetchData]);
 
   // Fonction pour gérer la recherche instantanée
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value;
     setSearchQuery(query);
-    fetchSearchKeywords(query); // Appeler la nouvelle fonction de recherche par mots-clés
+    fetchSearchKeywords(query);
   };
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]);
 
-  const hasFilters = (data: any) =>
+  const hasFilters = (data: FilterData) =>
     Object.values(data).some((value) => value !== null && value !== "");
 
   useEffect(() => {
     if (data && hasFilters(data)) {
       fetchFilterdData(data);
     }
-  }, [data]);
+  }, [data, fetchFilterdData]);
 
   return (
     <div className="flex flex-col min-h-screen p-4 sm:p-6 w-full">
@@ -361,7 +355,7 @@ const MainSession = ({ data }: Props) => {
               placeholder="Rechercher un document ..."
               required
               value={searchQuery}
-              onChange={handleSearch} // Appel de la fonction handleSearch à chaque changement
+              onChange={handleSearch}
             />
             <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
               <svg
@@ -381,12 +375,6 @@ const MainSession = ({ data }: Props) => {
               </svg>
             </div>
           </div>
-          {/* <button
-            type="submit"
-            className="btn focus:ring-4 py-5 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4"
-          >
-            Rechercher
-          </button> */}
         </div>
       </form>
       <br />
@@ -400,21 +388,27 @@ const MainSession = ({ data }: Props) => {
             <DocumentsSession
               key={document.id}
               title={document.title || "Titre non disponible"}
-              type={types[document.documentTypeId!] || "Type non disponible"}
+              type={document.documentTypeId ? types[document.documentTypeId] || "Type non disponible" : "Type non disponible"}
               year={
-                years[document.yearId!] !== undefined
-                  ? years[document.yearId!]
+                document.yearId && years[document.yearId] !== undefined
+                  ? years[document.yearId]
                   : "Année non disponible"
               }
               author={document.author || "Auteur non disponible"}
               discipline={
-                disciplines[document.disciplineId!] ||
-                "Discipline non disponible"
+                document.disciplineId
+                  ? disciplines[document.disciplineId] || "Discipline non disponible"
+                  : "Discipline non disponible"
               }
-              country={countries[document.countryId!] || "Pays non disponible"}
+              country={
+                document.countryId
+                  ? countries[document.countryId] || "Pays non disponible"
+                  : "Pays non disponible"
+              }
               university={
-                universities[document.universityId!] ||
-                "Université non disponible"
+                document.universityId
+                  ? universities[document.universityId] || "Université non disponible"
+                  : "Université non disponible"
               }
               path={document.path || "Valeur non disponible"}
             />

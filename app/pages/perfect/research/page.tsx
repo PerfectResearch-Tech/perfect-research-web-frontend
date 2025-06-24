@@ -5,9 +5,8 @@ import SideBar from "@/app/components/perfect/sider/research/SideBar";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
-const page = () => {
-  const [data, setData] = useState([]);
-
+const Page = () => {
+  const [data, setData] = useState<unknown[]>([]);
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
 
@@ -29,13 +28,13 @@ const page = () => {
     );
   }
 
-  const handlerCurrentData = (data: any) => {
-    setData(data);
-    console.log(data);
+  const handlerCurrentData = (newData: unknown[]) => {
+    setData(newData);
+    console.log(newData);
   };
 
   return (
-    <div className=" research-page bg-custom bg-[url('/file2.svg')]">
+    <div className="research-page bg-custom bg-[url('/file2.svg')]">
       <div className="research-page-all-items md:p-16">
         <div className="flex flex-col md:flex-row p-4 sm:p-8 min-h-screen bg-white">
           <SideBar handlerCurrentData={handlerCurrentData} />
@@ -48,4 +47,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

@@ -70,3 +70,11 @@
   margin-bottom: 1rem;
   padding: 0.5rem;
 } */
+
+.progress-bar {
+  width: 100%;
+  height: 0.5rem; /* par exemple */
+  background-color: #f97316; /* équivalent bg-orange-500 */
+  border-radius: 0.125rem; /* border radius */
+}
+
