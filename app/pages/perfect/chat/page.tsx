@@ -3,25 +3,27 @@ import Loading from "@/app/components/Loading/Loading";
 import MainSession from "@/app/components/perfect/main/chat/MainSession";
 import SideBar from "@/app/components/perfect/sider/chat/SideBar";
 import { getApiUrl } from "@/app/lib/config";
+import { Message } from "@/app/types";
 // import type { Message, Chat } from "@/app/types";
 
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
 
-type Message = {
-  id: string;
-  chatId: string;
-  senderId: string;
-  content: string;
-  createdAt: string;
-};
+// type Message = {
+//   id: string;
+//   chatId: string;
+//   senderId: string;
+//   content: string;
+//   createdAt: Date;
+// };
 
 type Chat = {
   id: string;
   title: string;
   lastMessage?: string;
   updatedAt: string;
+  createdAt:Date
 };
 
 const Page = () => {

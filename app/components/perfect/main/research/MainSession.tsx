@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import Loading from "@/app/components/Loading/Loading";
 import { getApiUrl } from "@/app/lib/config";
+import { FilterData } from "@/app/types";
 
 interface DocumentType {
   id: string;
@@ -20,9 +21,9 @@ interface DocumentType {
   path: string;
 }
 
-interface FilterData {
-  [key: string]: string | number | null | undefined;
-}
+// interface FilterData {
+//   [key: string]: string | number | null | undefined;
+// }
 
 interface Props {
   data: FilterData;

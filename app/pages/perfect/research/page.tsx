@@ -2,11 +2,12 @@
 import Loading from "@/app/components/Loading/Loading";
 import MainSession from "@/app/components/perfect/main/research/MainSession";
 import SideBar from "@/app/components/perfect/sider/research/SideBar";
+import { FilterData } from "@/app/types";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
 const Page = () => {
-  const [data, setData] = useState<unknown[]>([]);
+  const [data, setData] = useState<FilterData>({} as FilterData);
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
 
@@ -28,11 +29,10 @@ const Page = () => {
     );
   }
 
-  const handlerCurrentData = (newData: unknown[]) => {
-    setData(newData);
-    console.log(newData);
-  };
-
+ const handlerCurrentData = (newData: FilterData) => {
+  setData(newData);
+  console.log(newData);
+};
   return (
     <div className="research-page bg-custom bg-[url('/file2.svg')]">
       <div className="research-page-all-items md:p-16">
