@@ -18,6 +18,7 @@ import { v4 as uuidv4 } from "uuid";
 interface Year {
   id: string;
   year: string;
+
 }
 
 interface University {
@@ -28,6 +29,7 @@ interface University {
 interface Country {
   id: string;
   name: string;
+  code?:string
 }
 
 interface Discipline {
@@ -115,7 +117,9 @@ const DocumentsMain: React.FC<DocumentsMainProps> = ({ companyId }) => {
         });
 
         if (!response.ok) {
-          throw new Error(`Erreur lors de la récupération des ${endpoint.name}`);
+          throw new Error(
+            `Erreur lors de la récupération des ${endpoint.name}`
+          );
         }
 
         const data = await response.json();
@@ -142,7 +146,8 @@ const DocumentsMain: React.FC<DocumentsMainProps> = ({ companyId }) => {
     accept: {
       "application/pdf": [".pdf"],
       "application/msword": [".doc"],
-      "application/vnd.openxmlformats-officedocument.wordprocessingml.document": [".docx"],
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+        [".docx"],
     },
     maxFiles: 1,
     maxSize: 15 * 1024 * 1024,
@@ -168,7 +173,9 @@ const DocumentsMain: React.FC<DocumentsMainProps> = ({ companyId }) => {
     ),
     onDropRejected: useCallback(() => {
       setIsDragActive(false);
-      toast.error("Fichier non accepté. Veuillez uploader un fichier PDF, DOC ou DOCX de 15 Mo max.");
+      toast.error(
+        "Fichier non accepté. Veuillez uploader un fichier PDF, DOC ou DOCX de 15 Mo max."
+      );
     }, []),
     onDragEnter: useCallback(() => setIsDragActive(true), []),
     onDragLeave: useCallback(() => setIsDragActive(false), []),
@@ -244,9 +251,13 @@ const DocumentsMain: React.FC<DocumentsMainProps> = ({ companyId }) => {
         try {
           errorData = await fileResponse.json();
         } catch {
-          throw new Error("Erreur lors de la soumission du fichier : réponse non-JSON");
+          throw new Error(
+            "Erreur lors de la soumission du fichier : réponse non-JSON"
+          );
         }
-        throw new Error(errorData?.message || "Erreur lors de la soumission du fichier");
+        throw new Error(
+          errorData?.message || "Erreur lors de la soumission du fichier"
+        );
       }
 
       const fileData = await fileResponse.json();
@@ -275,7 +286,10 @@ const DocumentsMain: React.FC<DocumentsMainProps> = ({ companyId }) => {
 
       if (!documentResponse.ok) {
         const errorData = await documentResponse.json();
-        throw new Error(errorData.message || "Erreur lors de la soumission des détails du document");
+        throw new Error(
+          errorData.message ||
+            "Erreur lors de la soumission des détails du document"
+        );
       }
 
       toast.success("Document ajouté avec succès !");
@@ -295,11 +309,15 @@ const DocumentsMain: React.FC<DocumentsMainProps> = ({ companyId }) => {
   };
 
   // Handlers pour les selects et étapes
-  const handleCountryChange = (event: React.ChangeEvent<HTMLSelectElement>): void => {
+  const handleCountryChange = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ): void => {
     setSelectedCountry(event.target.value);
   };
 
-  const handleDocTypeChange = (e: React.ChangeEvent<HTMLSelectElement>): void => {
+  const handleDocTypeChange = (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ): void => {
     setSelectedDocType(e.target.value);
   };
 
@@ -350,10 +368,20 @@ const DocumentsMain: React.FC<DocumentsMainProps> = ({ companyId }) => {
   };
 
   // Helper pour récupérer le nom d'un item via son id
-  const getValueById = (id: string, list: { id: string; name: string }[]): string => {
+  const getValueById = (
+    id: string,
+    list: { id: string; name: string; year?:string |null }[]
+  ): string => {
     const foundItem = list.find((item) => item.id === id);
     return foundItem ? foundItem.name : "Non défini";
   };
+
+  const yearsWithName = years.map((y) => ({
+  id: y.id,
+  name: y.year, // on utilise year comme name
+  year: y.year, // facultatif, selon ton usage
+}));
+
 
   return (
     <section>
@@ -373,8 +401,12 @@ const DocumentsMain: React.FC<DocumentsMainProps> = ({ companyId }) => {
                     defaultOption="Sélectionner un document"
                     selectedOption={selectedDocType}
                     handleChange={handleDocTypeChange}
-                    datas={types}
+                    datas={types.map((type) => ({
+                      id: type.id,
+                      name: type.name,
+                    }))}
                   />
+
                   <br />
                   <DocInputSession
                     label="Titre du document :"
@@ -391,7 +423,10 @@ const DocumentsMain: React.FC<DocumentsMainProps> = ({ companyId }) => {
                     defaultOption="Sélectionner une année"
                     selectedOption={selectedYear}
                     handleChange={handleYearChange}
-                    datas={years}
+                   datas={years.map((type) => ({
+                      id: type.id,
+                      year: type.year,
+                    }))}
                   />
                   <br />
                   <DocInputSession
@@ -409,7 +444,10 @@ const DocumentsMain: React.FC<DocumentsMainProps> = ({ companyId }) => {
                     defaultOption="Sélectionner une université"
                     selectedOption={selectedUniversity}
                     handleChange={(e) => setSelectedUniversity(e.target.value)}
-                    datas={universities}
+                  datas={types.map((type) => ({
+                      id: type.id,
+                      name: type.name,
+                    }))}
                   />
                   <br />
                   <DocInputSession
@@ -427,16 +465,24 @@ const DocumentsMain: React.FC<DocumentsMainProps> = ({ companyId }) => {
                     defaultOption="Sélectionner une discipline"
                     selectedOption={selectedDiscipline}
                     handleChange={(e) => setSelectedDiscipline(e.target.value)}
-                    datas={disciplines}
+                  datas={disciplines.map((type) => ({
+                      id: type.id,
+                      name: type.name,
+                      
+                    }))}
                   />
                   <br />
                   <SelectCountryOption
                     label="Pays:"
-                    countries={countries}
+                    // countries={countries}
                     defaultOption="Sélectionner un pays"
                     selectedOption={selectedCountry}
                     handleChange={handleCountryChange}
-                    datas={countries}
+                    datas={countries.map((type) => ({
+                      id: type.id,
+                      name: type.name,
+                      code : type.code as string
+                    }))}
                   />
                   <br />
                   <DocTextArea
@@ -465,13 +511,23 @@ const DocumentsMain: React.FC<DocumentsMainProps> = ({ companyId }) => {
                       className="bg-gray-200 rounded-full p-2 text-center cursor-pointer"
                       onClick={(e) => setSelectedStep(selectedStep - 1)}
                     >
-                      <Image src={"/assets/icons/left-arrow.png"} height={15} width={15} alt="Retour" />
+                      <Image
+                        src={"/assets/icons/left-arrow.png"}
+                        height={15}
+                        width={15}
+                        alt="Retour"
+                      />
                     </span>
                     <span
                       className="bg-gray-200 rounded-full p-2 text-center cursor-pointer"
                       onClick={(e) => setSelectedStep(selectedStep + 1)}
                     >
-                      <Image src={"/assets/icons/right-arrow.png"} height={15} width={15} alt="Avancer" />
+                      <Image
+                        src={"/assets/icons/right-arrow.png"}
+                        height={15}
+                        width={15}
+                        alt="Avancer"
+                      />
                     </span>
                   </div>
                   <br />
@@ -486,16 +542,24 @@ const DocumentsMain: React.FC<DocumentsMainProps> = ({ companyId }) => {
                 <br />
                 <div className="flex flex-row align-center gap-5">
                   <div className="text-center align-center">
-                    <Image src={"/assets/images/png/pdf.png"} height={150} width={150} alt={"pdf"} />
+                    <Image
+                      src={"/assets/images/png/pdf.png"}
+                      height={150}
+                      width={150}
+                      alt={"pdf"}
+                    />
                     <p>{file?.file.name || "thèse.pdf"}</p>
                   </div>
                   <div>
                     <h2 className="righteous text-secondary">{title}</h2>
                     <p>Type: {getValueById(selectedDocType, types)}</p>
-                    <p>Année: {getValueById(selectedYear, years)}</p>
+                    <p>Année: {getValueById(selectedYear, yearsWithName)}</p>
                     <p>Pays: {getValueById(selectedCountry, countries)}</p>
                     <p>Auteur: {author}</p>
-                    <p>Discipline: {getValueById(selectedDiscipline, disciplines)}</p>
+                    <p>
+                      Discipline:{" "}
+                      {getValueById(selectedDiscipline, disciplines)}
+                    </p>
                   </div>
                 </div>
                 <br />
@@ -523,7 +587,12 @@ const DocumentsMain: React.FC<DocumentsMainProps> = ({ companyId }) => {
                   onClick={() => setSelectedStep(selectedStep - 1)}
                 >
                   <span className="bg-gray-200 rounded-full p-2 text-center">
-                    <Image src={"/assets/icons/left-arrow.png"} height={15} width={15} alt="Retour" />
+                    <Image
+                      src={"/assets/icons/left-arrow.png"}
+                      height={15}
+                      width={15}
+                      alt="Retour"
+                    />
                   </span>
                 </div>
               </div>
@@ -542,19 +611,34 @@ const DocumentsMain: React.FC<DocumentsMainProps> = ({ companyId }) => {
                   } p-5 text-center cursor-pointer`}
                 >
                   <input {...getInputProps()} />
-                  {isDragActive ? <p>Lâche le fichier ici...</p> : <p>Glisse-dépose un fichier (PDF) ici, ou clique pour sélectionner (max 15 Mo)</p>}
+                  {isDragActive ? (
+                    <p>Lâche le fichier ici...</p>
+                  ) : (
+                    <p>
+                      Glisse-dépose un fichier (PDF) ici, ou clique pour
+                      sélectionner (max 15 Mo)
+                    </p>
+                  )}
                 </div>
                 <div className="mt-5">
                   {file && (
                     <ul className="list-none p-0">
                       <li className="my-2 flex items-center">
                         <span className="mr-2">
-                          {file.file.name} - {(file.file.size / 1024).toFixed(2)} Ko
+                          {file.file.name} -{" "}
+                          {(file.file.size / 1024).toFixed(2)} Ko
                         </span>
-                        <a href={file.preview} download={file.file.name} className="mr-2 text-blue-500">
+                        <a
+                          href={file.preview}
+                          download={file.file.name}
+                          className="mr-2 text-blue-500"
+                        >
                           Télécharger
                         </a>
-                        <button onClick={handleRemoveFile} className="text-red-500 border-none bg-none cursor-pointer">
+                        <button
+                          onClick={handleRemoveFile}
+                          className="text-red-500 border-none bg-none cursor-pointer"
+                        >
                           Supprimer
                         </button>
                       </li>
@@ -565,15 +649,27 @@ const DocumentsMain: React.FC<DocumentsMainProps> = ({ companyId }) => {
                 {error && <p className="text-red-500 text-center">{error}</p>}
                 <br />
                 <div className="px-20">
-                  <button className="btn btn-primary w-full" type="button" onClick={(e) => handleStepChange(e, 2)}>
+                  <button
+                    className="btn btn-primary w-full"
+                    type="button"
+                    onClick={(e) => handleStepChange(e, 2)}
+                  >
                     Suivant
                   </button>
                 </div>
                 <br />
                 <br />
                 <div className="flex flex-row justify-end items-end cursor-pointer">
-                  <span onClick={() => setSelectedStep(selectedStep + 1)} className="bg-gray-200 rounded-full p-2 text-center">
-                    <Image src={"/assets/icons/right-arrow.png"} height={15} width={15} alt="Avancer" />
+                  <span
+                    onClick={() => setSelectedStep(selectedStep + 1)}
+                    className="bg-gray-200 rounded-full p-2 text-center"
+                  >
+                    <Image
+                      src={"/assets/icons/right-arrow.png"}
+                      height={15}
+                      width={15}
+                      alt="Avancer"
+                    />
                   </span>
                 </div>
               </div>

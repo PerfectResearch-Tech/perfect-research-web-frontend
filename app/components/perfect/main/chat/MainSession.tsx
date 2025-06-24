@@ -7,13 +7,14 @@ import { CircleUserRound } from "lucide-react";
 import { getApiUrl } from "@/app/lib/config";
 import { v4 as uuidv4 } from "uuid";
 import io, { Socket } from "socket.io-client";
+import { Message } from "@/app/types";
 
-interface Message {
-  id: string;
-  content: string;
-  sender: "USER" | "RAG";
-  timestamp: Date;
-}
+// interface Message {
+//   id: string;
+//   content: string;
+//   sender: "USER" | "RAG";
+//   createdAt: Date;
+// }
 
 interface MainSessionProps {
   activeChatId: string | null;
@@ -187,16 +188,19 @@ const MainSession = ({
         if (index !== -1) {
           updated[index] = {
             id: message.id,
+            chatId: message.chatId,
+
             content: message.content,
             sender: message.sender,
-            timestamp: new Date(message.createdAt || Date.now()),
+            createdAt: new Date(message.createdAt || Date.now()).toDateString(),
           };
         } else {
           updated.push({
             id: message.id,
+            chatId: message.chatId,
             content: message.content,
             sender: message.sender,
-            timestamp: new Date(message.createdAt || Date.now()),
+            createdAt: new Date(message.createdAt || Date.now()).toDateString(),
           });
         }
         return updated;
@@ -219,9 +223,11 @@ const MainSession = ({
           } else {
             updated.push({
               id: messageId,
+              chatId: messageId,
+
               content: chunk,
               sender: "RAG",
-              timestamp: new Date(),
+              createdAt: new Date().toDateString(),
             });
           }
           return updated;
@@ -243,9 +249,12 @@ const MainSession = ({
           if (index !== -1) {
             updated[index] = {
               id: message.id,
+              chatId: message.chatId,
               content: message.content,
               sender: message.sender,
-              timestamp: new Date(message.createdAt || Date.now()),
+              createdAt: new Date(
+                message.createdAt || Date.now()
+              ).toDateString(),
             };
           }
           return updated;
@@ -360,7 +369,7 @@ const MainSession = ({
               id: typedMsg.id,
               content: typedMsg.content,
               sender: typedMsg.sender,
-              timestamp: new Date(typedMsg.createdAt),
+              createdAt: new Date(typedMsg.createdAt),
             };
           })
         );
@@ -442,9 +451,10 @@ const MainSession = ({
     const tempId = uuidv4();
     const userMessage: Message = {
       id: tempId,
+      chatId: null,
       content: inputValue.trim(),
       sender: "USER",
-      timestamp: new Date(),
+      createdAt: new Date().toDateString(),
     };
 
     console.log("[DEBUG] Ajout message utilisateur :", userMessage);
@@ -556,7 +566,7 @@ const MainSession = ({
                           : "Aucune réponse")}
                     </p>
                     <div className="text-xs mt-1 opacity-70 text-right">
-                      {new Date(message.timestamp).toLocaleTimeString([], {
+                      {new Date(message.createdAt).toLocaleTimeString([], {
                         hour: "2-digit",
                         minute: "2-digit",
                       })}
@@ -616,6 +626,7 @@ const MainSession = ({
                 />
               </button>
               <button
+                title="essaie"
                 onClick={handleSendMessage}
                 disabled={!inputValue.trim()}
                 className={`p-2 rounded-full ${

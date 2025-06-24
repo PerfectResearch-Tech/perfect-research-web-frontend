@@ -23,7 +23,7 @@ export interface DisciplineData {
 }
 
 export interface UserData {
-  id: number;
+  id: string;
   username: string;
   email: string;
   role: string;
@@ -32,24 +32,37 @@ export interface UserData {
   [key: string]: string | number | boolean | null | undefined;
 }
 
-
-
 // app/types.ts
 
 export type Message = {
   id: string;
-  chatId: string;
-  sender: string;          // champ manquant dans ta définition
+  chatId: string | null;
+  sender: "USER" | "RAG";
+  // champ manquant dans ta définition
   content: string;
-  createdAt: string;       // ou timestamp selon ton API
+  createdAt: string; // ou timestamp selon ton API
 };
 
 export type Chat = {
   id: string;
   title: string;
   lastMessage?: string;
-  createdAt: string;       // ici ce champ est requis selon ton erreur
+  createdAt: string; // ici ce champ est requis selon ton erreur
   updatedAt: string;
 };
 
-export type DataItem = YearData | UniversityData | CountryData | DisciplineData | UserData;
+export type FilterData = {
+  yearId: string | null;
+  documentTypeId: string | null;
+  author: string | null;
+  universityId: string | null;
+  disciplineId: string | null;
+  countryId: string | null;
+};
+
+export type DataItem =
+  | YearData
+  | UniversityData
+  | CountryData
+  | DisciplineData
+  | UserData;
