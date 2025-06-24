@@ -1,3 +1,4 @@
+"use client";
 import DocInputSession from "@/app/components/generals/inputs/DocInputSession";
 import {
   SelectCountryOption,
@@ -7,11 +8,37 @@ import DocTextArea from "@/app/components/generals/textarea/DocTextArea";
 import ButtonLoading from "@/app/components/Loading/ButtonLoading";
 import { getApiUrl } from "@/app/lib/config";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+
 import React, { useCallback, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { toast, Toaster } from "sonner";
 import { v4 as uuidv4 } from "uuid";
+
+// Types précis pour les données chargées
+interface Year {
+  id: string;
+  year: string;
+}
+
+interface University {
+  id: string;
+  name: string;
+}
+
+interface Country {
+  id: string;
+  name: string;
+}
+
+interface Discipline {
+  id: string;
+  name: string;
+}
+
+interface DocumentType {
+  id: string;
+  name: string;
+}
 
 interface FileWithPreview {
   id: string;
@@ -21,42 +48,41 @@ interface FileWithPreview {
 }
 
 interface DocumentsMainProps {
-  companyId: string; // Ajout de la prop companyId
+  companyId: string;
 }
 
 const DocumentsMain: React.FC<DocumentsMainProps> = ({ companyId }) => {
-  const [selectedStep, setSelectedStep] = useState(1);
-  const [isLoading, setIsLoading] = useState(false);
+  const [selectedStep, setSelectedStep] = useState<number>(1);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [selectedDocType, setSelectedDocType] = useState<string>("");
-  const [title, setTitle] = useState("");
+  const [title, setTitle] = useState<string>("");
   const [selectedYear, setSelectedYear] = useState<string>("");
-  const [author, setAuthor] = useState("");
+  const [author, setAuthor] = useState<string>("");
   const [selectedUniversity, setSelectedUniversity] = useState<string>("");
-  const [university, setUniversity] = useState("");
+  const [university, setUniversity] = useState<string>("");
   const [selectedDiscipline, setSelectedDiscipline] = useState<string>("");
   const [selectedCountry, setSelectedCountry] = useState<string>("");
-  const [description, setDescription] = useState("");
+  const [description, setDescription] = useState<string>("");
   const [error, setError] = useState<string>("");
-  const [years, setYears] = useState<any[]>([]);
-  const [universities, setUniversities] = useState<any[]>([]);
-  const [countries, setCountries] = useState<any[]>([]);
-  const [disciplines, setDisciplines] = useState<any[]>([]);
-  const [types, setTypes] = useState<any[]>([]);
+
+  const [years, setYears] = useState<Year[]>([]);
+  const [universities, setUniversities] = useState<University[]>([]);
+  const [countries, setCountries] = useState<Country[]>([]);
+  const [disciplines, setDisciplines] = useState<Discipline[]>([]);
+  const [types, setTypes] = useState<DocumentType[]>([]);
+
   const [file, setFile] = useState<FileWithPreview | null>(null);
-  const [isDragActive, setIsDragActive] = useState(false);
+  const [isDragActive, setIsDragActive] = useState<boolean>(false);
 
-  const router = useRouter();
-
-  // Récupération des données pour les sélecteurs
-  const fetchAllData = async () => {
+  // Fonction pour récupérer les données (years, universities, etc)
+  const fetchAllData = async (): Promise<void> => {
     const token = localStorage.getItem("accessToken");
     if (!token) {
-      console.log("[DEBUG] Aucun token trouvé pour fetchAllData");
       toast.error("Vous devez être connecté pour effectuer cette action.");
       return;
     }
 
-    const endpoints = [
+    const endpoints: { name: keyof typeof allData; url: string }[] = [
       { name: "years", url: "/admin/years" },
       { name: "universities", url: "/admin/universities" },
       { name: "countries", url: "/admin/countries" },
@@ -64,7 +90,14 @@ const DocumentsMain: React.FC<DocumentsMainProps> = ({ companyId }) => {
       { name: "types", url: "/admin/document-types" },
     ];
 
-    const allData: Record<string, any[]> = {
+    // Objet avec les clés strictes
+    const allData: {
+      years: Year[];
+      universities: University[];
+      countries: Country[];
+      disciplines: Discipline[];
+      types: DocumentType[];
+    } = {
       years: [],
       universities: [],
       countries: [],
@@ -82,7 +115,6 @@ const DocumentsMain: React.FC<DocumentsMainProps> = ({ companyId }) => {
         });
 
         if (!response.ok) {
-          console.log("[DEBUG] Erreur pour endpoint", endpoint.url, ":", response.status);
           throw new Error(`Erreur lors de la récupération des ${endpoint.name}`);
         }
 
@@ -105,7 +137,7 @@ const DocumentsMain: React.FC<DocumentsMainProps> = ({ companyId }) => {
     fetchAllData();
   }, []);
 
-  // Gestion du téléversement du fichier
+  // Dropzone pour upload fichier
   const { getRootProps, getInputProps } = useDropzone({
     accept: {
       "application/pdf": [".pdf"],
@@ -122,7 +154,7 @@ const DocumentsMain: React.FC<DocumentsMainProps> = ({ companyId }) => {
         }
         const newFile = acceptedFiles[0];
         if (newFile) {
-          const fileWithPreview = {
+          const fileWithPreview: FileWithPreview = {
             id: uuidv4(),
             file: newFile,
             preview: URL.createObjectURL(newFile),
@@ -143,7 +175,7 @@ const DocumentsMain: React.FC<DocumentsMainProps> = ({ companyId }) => {
     onDragOver: useCallback(() => setIsDragActive(true), []),
   });
 
-  const handleRemoveFile = () => {
+  const handleRemoveFile = (): void => {
     if (file) {
       URL.revokeObjectURL(file.preview);
       setFile(null);
@@ -158,7 +190,8 @@ const DocumentsMain: React.FC<DocumentsMainProps> = ({ companyId }) => {
     };
   }, [file]);
 
-  const handlerSubmit = async () => {
+  // Soumission du formulaire
+  const handlerSubmit = async (): Promise<void> => {
     setIsLoading(true);
     const token = localStorage.getItem("accessToken");
 
@@ -170,7 +203,6 @@ const DocumentsMain: React.FC<DocumentsMainProps> = ({ companyId }) => {
     }
 
     if (!companyId) {
-      console.log("[DEBUG] companyId est vide dans handlerSubmit");
       setError("L'identifiant de l'entreprise est requis.");
       toast.error("L'identifiant de l'entreprise est requis.");
       setIsLoading(false);
@@ -196,14 +228,13 @@ const DocumentsMain: React.FC<DocumentsMainProps> = ({ companyId }) => {
     try {
       const formData = new FormData();
       formData.append("file", file.file);
-      formData.append("companyId", companyId); // companyId dans formData
+      formData.append("companyId", companyId);
 
-      console.log("[DEBUG] Envoi de la requête /document/upload avec companyId:", companyId);
       const fileResponse = await fetch(`${getApiUrl("/document/upload")}`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
-          "X-Company-Id": companyId, // En-tête pour compatibilité
+          "X-Company-Id": companyId,
         },
         body: formData,
       });
@@ -212,17 +243,14 @@ const DocumentsMain: React.FC<DocumentsMainProps> = ({ companyId }) => {
         let errorData;
         try {
           errorData = await fileResponse.json();
-        } catch (jsonError) {
-          console.error("[DEBUG] Erreur lors du parsing de la réponse d'erreur:", jsonError);
-          throw new Error("Erreur lors de la soumission du fichier: réponse non-JSON");
+        } catch {
+          throw new Error("Erreur lors de la soumission du fichier : réponse non-JSON");
         }
-        console.log("[DEBUG] Réponse d'erreur de /document/upload:", errorData);
-        throw new Error(errorData.message || "Erreur lors de la soumission du fichier");
+        throw new Error(errorData?.message || "Erreur lors de la soumission du fichier");
       }
 
       const fileData = await fileResponse.json();
-      console.log("[DEBUG] Réponse de /document/upload:", fileData);
-      const filePath = fileData.path;
+      const filePath: string = fileData.path;
 
       const documentResponse = await fetch(`${getApiUrl("/document/submit")}`, {
         method: "POST",
@@ -247,41 +275,42 @@ const DocumentsMain: React.FC<DocumentsMainProps> = ({ companyId }) => {
 
       if (!documentResponse.ok) {
         const errorData = await documentResponse.json();
-        console.log("[DEBUG] Réponse d'erreur de /document/submit:", errorData);
         throw new Error(errorData.message || "Erreur lors de la soumission des détails du document");
       }
 
-      console.log("Document et détails soumis avec succès !");
-      setSelectedStep(1);
       toast.success("Document ajouté avec succès !");
-    } catch (error) {
+      setSelectedStep(1);
+    } catch (error: unknown) {
       console.error("Erreur lors de la soumission:", error);
-      setError(error.message || "Une erreur est survenue lors de la soumission.");
-      toast.error(error.message || "Une erreur est survenue lors de la soumission.");
+      if (error instanceof Error) {
+        setError(error.message);
+        toast.error(error.message);
+      } else {
+        setError("Une erreur est survenue lors de la soumission.");
+        toast.error("Une erreur est survenue lors de la soumission.");
+      }
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleCountryChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    event.preventDefault();
+  // Handlers pour les selects et étapes
+  const handleCountryChange = (event: React.ChangeEvent<HTMLSelectElement>): void => {
     setSelectedCountry(event.target.value);
   };
 
-  const handleDocTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    e.preventDefault();
+  const handleDocTypeChange = (e: React.ChangeEvent<HTMLSelectElement>): void => {
     setSelectedDocType(e.target.value);
   };
 
-  const handleYearChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    e.preventDefault();
+  const handleYearChange = (e: React.ChangeEvent<HTMLSelectElement>): void => {
     setSelectedYear(e.target.value);
   };
 
   const handleStepChange = (
     e: React.MouseEvent<HTMLButtonElement>,
     step: number
-  ) => {
+  ): void => {
     e.preventDefault();
 
     if (step === 2) {
@@ -290,6 +319,7 @@ const DocumentsMain: React.FC<DocumentsMainProps> = ({ companyId }) => {
         toast.error("Veuillez sélectionner un fichier pour continuer");
         return;
       }
+      // Reset champs étape 2
       setSelectedDocType("");
       setTitle("");
       setSelectedYear("");
@@ -319,7 +349,8 @@ const DocumentsMain: React.FC<DocumentsMainProps> = ({ companyId }) => {
     setSelectedStep(step);
   };
 
-  const getValueById = (id: string, list: { id: string; name: string }[]) => {
+  // Helper pour récupérer le nom d'un item via son id
+  const getValueById = (id: string, list: { id: string; name: string }[]): string => {
     const foundItem = list.find((item) => item.id === id);
     return foundItem ? foundItem.name : "Non défini";
   };
@@ -431,26 +462,16 @@ const DocumentsMain: React.FC<DocumentsMainProps> = ({ companyId }) => {
                   <br />
                   <div className="flex flex-row justify-between">
                     <span
-                      className="bg-gray-200 rounded-full p-2 text-center"
+                      className="bg-gray-200 rounded-full p-2 text-center cursor-pointer"
                       onClick={(e) => setSelectedStep(selectedStep - 1)}
                     >
-                      <Image
-                        src={"/assets/icons/left-arrow.png"}
-                        height={15}
-                        width={15}
-                        alt=""
-                      />
+                      <Image src={"/assets/icons/left-arrow.png"} height={15} width={15} alt="Retour" />
                     </span>
                     <span
-                      className="bg-gray-200 rounded-full p-2 text-center"
+                      className="bg-gray-200 rounded-full p-2 text-center cursor-pointer"
                       onClick={(e) => setSelectedStep(selectedStep + 1)}
                     >
-                      <Image
-                        src={"/assets/icons/right-arrow.png"}
-                        height={15}
-                        width={15}
-                        alt=""
-                      />
+                      <Image src={"/assets/icons/right-arrow.png"} height={15} width={15} alt="Avancer" />
                     </span>
                   </div>
                   <br />
@@ -465,12 +486,7 @@ const DocumentsMain: React.FC<DocumentsMainProps> = ({ companyId }) => {
                 <br />
                 <div className="flex flex-row align-center gap-5">
                   <div className="text-center align-center">
-                    <Image
-                      src={"/assets/images/png/pdf.png"}
-                      height={150}
-                      width={150}
-                      alt={"pdf"}
-                    />
+                    <Image src={"/assets/images/png/pdf.png"} height={150} width={150} alt={"pdf"} />
                     <p>{file?.file.name || "thèse.pdf"}</p>
                   </div>
                   <div>
@@ -503,16 +519,11 @@ const DocumentsMain: React.FC<DocumentsMainProps> = ({ companyId }) => {
                 <br />
                 <br />
                 <div
-                  className="flex flex-row justify-start items-start"
-                  onClick={(e) => setSelectedStep(selectedStep - 1)}
+                  className="flex flex-row justify-start items-start cursor-pointer"
+                  onClick={() => setSelectedStep(selectedStep - 1)}
                 >
                   <span className="bg-gray-200 rounded-full p-2 text-center">
-                    <Image
-                      src={"/assets/icons/left-arrow.png"}
-                      height={15}
-                      width={15}
-                      alt=""
-                    />
+                    <Image src={"/assets/icons/left-arrow.png"} height={15} width={15} alt="Retour" />
                   </span>
                 </div>
               </div>
@@ -531,14 +542,7 @@ const DocumentsMain: React.FC<DocumentsMainProps> = ({ companyId }) => {
                   } p-5 text-center cursor-pointer`}
                 >
                   <input {...getInputProps()} />
-                  {isDragActive ? (
-                    <p>Lâche le fichier ici...</p>
-                  ) : (
-                    <p>
-                      Glisse-dépose un fichier (PDF) ici, ou clique pour
-                      sélectionner (max 15 Mo)
-                    </p>
-                  )}
+                  {isDragActive ? <p>Lâche le fichier ici...</p> : <p>Glisse-dépose un fichier (PDF) ici, ou clique pour sélectionner (max 15 Mo)</p>}
                 </div>
                 <div className="mt-5">
                   {file && (
@@ -547,17 +551,10 @@ const DocumentsMain: React.FC<DocumentsMainProps> = ({ companyId }) => {
                         <span className="mr-2">
                           {file.file.name} - {(file.file.size / 1024).toFixed(2)} Ko
                         </span>
-                        <a
-                          href={file.preview}
-                          download={file.file.name}
-                          className="mr-2 text-blue-500"
-                        >
+                        <a href={file.preview} download={file.file.name} className="mr-2 text-blue-500">
                           Télécharger
                         </a>
-                        <button
-                          onClick={handleRemoveFile}
-                          className="text-red-500 border-none bg-none cursor-pointer"
-                        >
+                        <button onClick={handleRemoveFile} className="text-red-500 border-none bg-none cursor-pointer">
                           Supprimer
                         </button>
                       </li>
@@ -568,27 +565,15 @@ const DocumentsMain: React.FC<DocumentsMainProps> = ({ companyId }) => {
                 {error && <p className="text-red-500 text-center">{error}</p>}
                 <br />
                 <div className="px-20">
-                  <button
-                    className="btn btn-primary w-full"
-                    type="button"
-                    onClick={(e) => handleStepChange(e, 2)}
-                  >
+                  <button className="btn btn-primary w-full" type="button" onClick={(e) => handleStepChange(e, 2)}>
                     Suivant
                   </button>
                 </div>
                 <br />
                 <br />
-                <div className="flex flex-row justify-end items-end">
-                  <span
-                    className="bg-gray-200 rounded-full p-2 text-center"
-                    onClick={(e) => setSelectedStep(selectedStep + 1)}
-                  >
-                    <Image
-                      src={"/assets/icons/right-arrow.png"}
-                      height={15}
-                      width={15}
-                      alt=""
-                    />
+                <div className="flex flex-row justify-end items-end cursor-pointer">
+                  <span onClick={() => setSelectedStep(selectedStep + 1)} className="bg-gray-200 rounded-full p-2 text-center">
+                    <Image src={"/assets/icons/right-arrow.png"} height={15} width={15} alt="Avancer" />
                   </span>
                 </div>
               </div>

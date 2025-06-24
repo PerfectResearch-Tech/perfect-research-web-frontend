@@ -3,17 +3,34 @@ import Loading from "@/app/components/Loading/Loading";
 import MainSession from "@/app/components/perfect/main/chat/MainSession";
 import SideBar from "@/app/components/perfect/sider/chat/SideBar";
 import { getApiUrl } from "@/app/lib/config";
+// import type { Message, Chat } from "@/app/types";
 
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
 
+type Message = {
+  id: string;
+  chatId: string;
+  senderId: string;
+  content: string;
+  createdAt: string;
+};
+
+type Chat = {
+  id: string;
+  title: string;
+  lastMessage?: string;
+  updatedAt: string;
+};
+
 const Page = () => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   const [activeChatId, setActiveChatId] = useState<string | null>(null);
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [chatList, setChatList] = useState<any[]>([]);
+ const [messages, setMessages] = useState<Message[]>([]);
+const [chatList, setChatList] = useState<Chat[]>([]);
+
   const [showProfilePopup, setShowProfilePopup] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
 
@@ -28,124 +45,45 @@ const Page = () => {
 
     setUserId(userIdStored);
 
+    const checkUserProfileStatus = async () => {
+      try {
+        const response = await fetch(`${getApiUrl(`/user/${userIdStored}`)}`, {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        });
 
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(errorText || `HTTP ${response.status}`);
+        }
 
-    // const checkUserProfileStatus = async () => {
-    //   try {
-    //     const response = await fetch(`${getApiUrl(`/user/${userIdStored}`)}`, {
-        
-    //       headers: {
-    //         Authorization: `Bearer ${accessToken}`,
-    //       },
-    //     });
+        const contentType = response.headers.get("Content-Type");
+        if (!contentType?.includes("application/json")) {
+          throw new Error("Le serveur n'a pas renvoyé de JSON");
+        }
 
-    //     if (!response.ok) {
-    //       throw new Error("Erreur lors de la récupération du profil utilisateur");
-    //     }
+        const userData = await response.json();
 
-    //     const userData = await response.json();
+        if (!userData) {
+          throw new Error("Données utilisateur manquantes");
+        }
 
-    //     if (!userData.isProfileComplete) {
-    //       setShowProfilePopup(true);
-    //     }
+        const isAdmin = userData.role === "ADMIN";
+        const isProfileComplete = userData.isProfileComplete;
 
-    //     setIsLoading(false);
-    //   } catch (error) {
-    //     console.error("Erreur :", error);
-    //     toast.error("Impossible de vérifier le profil utilisateur");
-    //   }
-    // };
+        if (!isAdmin && !isProfileComplete) {
+          setShowProfilePopup(true);
+        }
+      } catch (error) {
+        console.error("Erreur :", error);
+        toast.error(error instanceof Error ? error.message : "Erreur inconnue");
 
-
-
-
-// const checkUserProfileStatus = async () => {
-//   try {
-//     const response = await fetch(`${getApiUrl(`/user/${userIdStored}`)}`, {
-//       headers: {
-//         Authorization: `Bearer ${accessToken}`,
-//       },
-//     });
-
-//     if (!response.ok) {
-//       throw new Error("Erreur lors de la récupération du profil utilisateur");
-//     }
-
-//     const text = await response.text();
-//     const userData = text ? JSON.parse(text) : null;
-
-//     if (!userData) {
-//       throw new Error("Réponse vide du serveur");
-//     }
-
-//     const isAdmin = userData.role === "ADMIN";
-//     const isProfileComplete = userData.isProfileComplete;
-
-//     if (!isAdmin && !isProfileComplete) {
-//       setShowProfilePopup(true);
-//     }
-
-//     setIsLoading(false);
-//   } catch (error) {
-//     console.error("Erreur :", error);
-//     toast.error("Impossible de vérifier le profil utilisateur");
-//   }
-// };
-
-
-
-const checkUserProfileStatus = async () => {
-  try {
-    if (!accessToken) {
-      toast.error("Session expirée");
-      redirect("/login");
-      return;
-    }
-
-    const response = await fetch(`${getApiUrl(`/user/${userIdStored}`)}`, {
-      headers: { Authorization: `Bearer ${accessToken}` },
-    });
-
-    // Vérification du statut HTTP
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(errorText || `HTTP ${response.status}`);
-    }
-
-    // Vérification du Content-Type
-    const contentType = response.headers.get("Content-Type");
-    if (!contentType?.includes("application/json")) {
-      throw new Error("Le serveur n'a pas renvoyé de JSON");
-    }
-
-    // Extraction des données
-    const userData = await response.json();
-
-    if (!userData) {
-      throw new Error("Données utilisateur manquantes");
-    }
-
-    // Traitement des données...
-    const isAdmin = userData.role === "ADMIN";
-    const isProfileComplete = userData.isProfileComplete;
-
-    if (!isAdmin && !isProfileComplete) {
-      setShowProfilePopup(true);
-    }
-  } catch (error) {
-    console.error("Erreur :", error);
-    toast.error(error instanceof Error ? error.message : "Erreur inconnue");
-
-    // Redirection si token invalide
-    if (error.message.includes("401")) {
-      redirect("/login");
-    }
-  } finally {
-    setIsLoading(false);
-  }
-};
-
-
+        if (error instanceof Error && error.message.includes("401")) {
+          router.push("/pages/authentication/login");
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
     checkUserProfileStatus();
   }, [router]);
@@ -171,7 +109,7 @@ const checkUserProfileStatus = async () => {
 
       if (!response.ok) throw new Error("Erreur lors de la récupération des messages");
 
-      const messages = await response.json();
+      const messages: Message[] = await response.json();
       setMessages(messages);
     } catch (error) {
       console.error("Erreur lors de la récupération des messages :", error);
@@ -200,7 +138,7 @@ const checkUserProfileStatus = async () => {
 
       if (!response.ok) throw new Error("Erreur lors de la récupération des chats");
 
-      const chats = await response.json();
+      const chats: Chat[] = await response.json();
       setChatList(chats);
     } catch (error) {
       console.error("Erreur lors de la récupération des chats :", error);
@@ -218,7 +156,9 @@ const checkUserProfileStatus = async () => {
         <div className="absolute inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
           <div className="bg-white p-8 rounded-xl shadow-xl text-center max-w-md w-full">
             <h2 className="text-lg regular mb-4">Profil incomplet</h2>
-            <p className="mb-6 regular">Votre profil est incomplet. Voulez-vous le compléter maintenant ?</p>
+            <p className="mb-6 regular">
+              Votre profil est incomplet. Voulez-vous le compléter maintenant ?
+            </p>
             <div className="flex justify-center gap-4">
               <button
                 onClick={() => {
@@ -230,7 +170,7 @@ const checkUserProfileStatus = async () => {
               </button>
               <button
                 onClick={() => setShowProfilePopup(false)}
-                className="bg-orange-500  regular text-white px-4 py-2 rounded-lg transition"
+                className="bg-orange-500 regular text-white px-4 py-2 rounded-lg transition"
               >
                 Continuer plus tard
               </button>

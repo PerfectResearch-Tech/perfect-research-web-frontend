@@ -5,7 +5,7 @@ import Image from "next/image";
 import "../authentication.css";
 import PrimaryButton from "@/app/components/generals/buttons/PrimaryButton";
 import { useRouter } from "next/navigation";
-import Loading from "@/app/components/Loading/Loading";
+
 import { toast, Toaster } from "sonner";
 import ButtonLoading from "@/app/components/Loading/ButtonLoading";
 import { getApiUrl } from "@/app/lib/config";
@@ -192,7 +192,7 @@ const Login = () => {
             <br />
 
             <p className="text-center regular">
-              Vous n'avez pas de compte ?{" "}
+              Vous n&lsquo;avez pas de compte ?{" "}
               <Link
                 href="/pages/authentication/registration"
                 className="text-blue-600 regular"

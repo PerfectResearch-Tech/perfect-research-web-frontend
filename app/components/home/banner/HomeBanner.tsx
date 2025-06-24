@@ -2,13 +2,13 @@ import React from "react";
 import HomeHeader from "../header/HomeHeader";
 import Link from "next/link";
 import Image from "next/image";
-import { BackgroundLines } from "@/app/components/ui/background-lines";
+
 
 const HomeBanner = () => {
   return (
     <section className="relative min-h-screen overflow-hidden">
       {/* Ici on met BackgroundLines en fond */}
-      <BackgroundLines className="absolute inset-0 -z-10" />
+  
       <div className="absolute inset-0 h-full w-full bg-hero-background bg-[linear-gradient(to_right,#80808012_1px,transparent_5px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,#000_60%,transparent_100%)]"></div>
       <div className="absolute inset-0 h-full w-full bg-hero-background bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,#000_60%,transparent_100%)]"></div>
 
@@ -28,7 +28,7 @@ const HomeBanner = () => {
             </h1>
 
             <p className="regular md:text-4xl text-black opacity-90 typewriter">
-              L'IA qui vous aide à rédiger vos thèses et vos mémoires
+              L&apos;IA qui vous aide à rédiger vos thèses et vos mémoires
             </p>
 
             <div className="flex flex-col sm:flex-row justify-center gap-4 mt-8 animate-fade-in delay-200">

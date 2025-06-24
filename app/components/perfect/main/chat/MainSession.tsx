@@ -1,19 +1,12 @@
-'use client';
+"use client";
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { 
-  FaComment, 
-  FaPaperclip, 
-  FaTimes, 
-  FaPaperPlane, 
-  FaMicrophone,
-  FaGlobe
-} from "react-icons/fa";
+import { FaComment, FaPaperPlane, FaMicrophone, FaGlobe } from "react-icons/fa";
 import { toast } from "sonner";
 import { CircleUserRound } from "lucide-react";
 import { getApiUrl } from "@/app/lib/config";
 import { v4 as uuidv4 } from "uuid";
-import io, { Socket } from 'socket.io-client';
+import io, { Socket } from "socket.io-client";
 
 interface Message {
   id: string;
@@ -45,18 +38,21 @@ const ChatLoading = () => (
   </div>
 );
 
-const ProfilDropdown = ({ 
-  isProfileOpen, 
-  setIsProfileOpen, 
-  username, 
-  email, 
-  handleLogout 
+const ProfilDropdown = ({
+  isProfileOpen,
+  setIsProfileOpen,
+  username,
+  email,
+  handleLogout,
 }: ProfilDropdownProps) => {
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsProfileOpen(false);
       }
     };
@@ -123,7 +119,7 @@ const MainSession = ({
   }, []);
 
   useEffect(() => {
-    console.log('[DEBUG] État messages mis à jour :', messages);
+    console.log("[DEBUG] État messages mis à jour :", messages);
     scrollToBottom();
   }, [messages, isAiTyping, scrollToBottom]);
 
@@ -147,14 +143,15 @@ const MainSession = ({
         }
       );
 
-      if (!response.ok) throw new Error("Erreur lors de la récupération de l'utilisateur");
+      if (!response.ok)
+        throw new Error("Erreur lors de la récupération de l'utilisateur");
 
       const user = await response.json();
       setUsername(user.username);
       setEmail(user.email);
       if (user.companyId) {
         setCompanyId(user.companyId); // Définir companyId dynamiquement
-        console.log('[DEBUG] companyId récupéré:', user.companyId);
+        console.log("[DEBUG] companyId récupéré:", user.companyId);
       } else {
         setCompanyId("cmbjatwo90000k8hk297pykwi"); // Fallback
       }
@@ -170,20 +167,20 @@ const MainSession = ({
 
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
-    socketRef.current = io(getApiUrl(''), {
+    socketRef.current = io(getApiUrl(""), {
       auth: { token: `Bearer ${token}` },
     });
 
-    socketRef.current.on('connect', () => {
-      console.log('[DEBUG] Connecté au WebSocket:', socketRef.current?.id);
+    socketRef.current.on("connect", () => {
+      console.log("[DEBUG] Connecté au WebSocket:", socketRef.current?.id);
       if (activeChatId) {
-        socketRef.current?.emit('joinChat', activeChatId);
-        console.log('[DEBUG] Rejoint le chat:', activeChatId);
+        socketRef.current?.emit("joinChat", activeChatId);
+        console.log("[DEBUG] Rejoint le chat:", activeChatId);
       }
     });
 
-    socketRef.current.on('messageUpdate', (message: Message) => {
-      console.log('[DEBUG] Message WebSocket reçu (messageUpdate):', message);
+    socketRef.current.on("messageUpdate", (message: Message) => {
+      console.log("[DEBUG] Message WebSocket reçu (messageUpdate):", message);
       setMessages((prev) => {
         const updated = [...prev];
         const index = updated.findIndex((m) => m.id === message.id);
@@ -204,73 +201,85 @@ const MainSession = ({
         }
         return updated;
       });
-      setIsAiTyping(message.sender === 'RAG' && message.content === '');
+      setIsAiTyping(message.sender === "RAG" && message.content === "");
     });
 
-    socketRef.current.on('messageChunk', ({ messageId, chunk }: { messageId: string; chunk: string }) => {
-      console.log('[DEBUG] Chunk WebSocket reçu:', { messageId, chunk });
-      setMessages((prev) => {
-        const updated = [...prev];
-        const index = updated.findIndex((m) => m.id === messageId);
-        if (index !== -1) {
-          updated[index] = {
-            ...updated[index],
-            content: updated[index].content + chunk,
-          };
-        } else {
-          updated.push({
-            id: messageId,
-            content: chunk,
-            sender: 'RAG',
-            timestamp: new Date(),
-          });
-        }
-        return updated;
-      });
-      setIsAiTyping(true);
+    socketRef.current.on(
+      "messageChunk",
+      ({ messageId, chunk }: { messageId: string; chunk: string }) => {
+        console.log("[DEBUG] Chunk WebSocket reçu:", { messageId, chunk });
+        setMessages((prev) => {
+          const updated = [...prev];
+          const index = updated.findIndex((m) => m.id === messageId);
+          if (index !== -1) {
+            updated[index] = {
+              ...updated[index],
+              content: updated[index].content + chunk,
+            };
+          } else {
+            updated.push({
+              id: messageId,
+              content: chunk,
+              sender: "RAG",
+              timestamp: new Date(),
+            });
+          }
+          return updated;
+        });
+        setIsAiTyping(true);
+      }
+    );
+
+    socketRef.current.on(
+      "streamEnd",
+      ({ messageId, message }: { messageId: string; message: Message }) => {
+        console.log("[DEBUG] Stream terminé (streamEnd):", {
+          messageId,
+          message,
+        });
+        setMessages((prev) => {
+          const updated = [...prev];
+          const index = updated.findIndex((m) => m.id === messageId);
+          if (index !== -1) {
+            updated[index] = {
+              id: message.id,
+              content: message.content,
+              sender: message.sender,
+              timestamp: new Date(message.createdAt || Date.now()),
+            };
+          }
+          return updated;
+        });
+        setIsAiTyping(false);
+      }
+    );
+
+    socketRef.current.on(
+      "streamError",
+      ({ messageId, error }: { messageId: string; error: string }) => {
+        console.error("[ERREUR] Erreur WebSocket (streamError):", error);
+        toast.error(error || "Erreur lors de la génération de la réponse");
+        setMessages((prev) => {
+          const updated = [...prev];
+          const index = updated.findIndex((m) => m.id === messageId);
+          if (index !== -1) {
+            updated[index] = {
+              ...updated[index],
+              content: "Erreur : impossible de générer la réponse.",
+            };
+          }
+          return updated;
+        });
+        setIsAiTyping(false);
+      }
+    );
+
+    socketRef.current.on("disconnect", () => {
+      console.log("[DEBUG] Déconnecté du WebSocket");
     });
 
-    socketRef.current.on('streamEnd', ({ messageId, message }: { messageId: string; message: Message }) => {
-      console.log('[DEBUG] Stream terminé (streamEnd):', { messageId, message });
-      setMessages((prev) => {
-        const updated = [...prev];
-        const index = updated.findIndex((m) => m.id === messageId);
-        if (index !== -1) {
-          updated[index] = {
-            id: message.id,
-            content: message.content,
-            sender: message.sender,
-            timestamp: new Date(message.createdAt || Date.now()),
-          };
-        }
-        return updated;
-      });
-      setIsAiTyping(false);
-    });
-
-    socketRef.current.on('streamError', ({ messageId, error }: { messageId: string; error: string }) => {
-      console.error('[ERREUR] Erreur WebSocket (streamError):', error);
-      toast.error(error || 'Erreur lors de la génération de la réponse');
-      setMessages((prev) => {
-        const updated = [...prev];
-        const index = updated.findIndex((m) => m.id === messageId);
-        if (index !== -1) {
-          updated[index] = {
-            ...updated[index],
-            content: 'Erreur : impossible de générer la réponse.',
-          };
-        }
-        return updated;
-      });
-      setIsAiTyping(false);
-    });
-
-    socketRef.current.on('disconnect', () => {
-      console.log('[DEBUG] Déconnecté du WebSocket');
-    });
-
-    socketRef.current.on('connect_error', (error) => {
-      console.error('[ERREUR] Erreur de connexion WebSocket:', error);
+    socketRef.current.on("connect_error", (error) => {
+      console.error("[ERREUR] Erreur de connexion WebSocket:", error);
       toast.error("Erreur de connexion au WebSocket");
     });
 
@@ -287,12 +296,15 @@ const MainSession = ({
   };
 
   const sendMessageToBackend = async (messageContent: string) => {
-    console.log('[DEBUG] Début de sendMessageToBackend - Message:', messageContent);
+    console.log(
+      "[DEBUG] Début de sendMessageToBackend - Message:",
+      messageContent
+    );
 
     const userId = localStorage.getItem("user");
     const token = localStorage.getItem("accessToken");
     if (!userId || !token) {
-      console.error('[ERREUR] Identifiants manquants dans le localStorage');
+      console.error("[ERREUR] Identifiants manquants dans le localStorage");
       toast.error("Session expirée, veuillez vous reconnecter");
       handleLogout();
       return null;
@@ -304,10 +316,14 @@ const MainSession = ({
       companyId, // Utilise companyId dynamique
     });
 
-    console.log('[DEBUG] Configuration requête:', { url: '/chats', method: "POST", body: JSON.parse(body) });
+    console.log("[DEBUG] Configuration requête:", {
+      url: "/chats",
+      method: "POST",
+      body: JSON.parse(body),
+    });
 
     try {
-      const response = await fetch(getApiUrl('/chats'), {
+      const response = await fetch(getApiUrl("/chats"), {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -318,34 +334,46 @@ const MainSession = ({
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.error('[ERREUR] Requête échouée:', response.status, errorText);
+        console.error("[ERREUR] Requête échouée:", response.status, errorText);
         throw new Error(`Erreur HTTP: ${response.status} - ${errorText}`);
       }
 
       const responseData = await response.json();
-      console.log('[DEBUG] Réponse finale:', responseData);
+      console.log("[DEBUG] Réponse finale:", responseData);
 
       if (responseData.chatResponse?.id) {
-        console.log('[DEBUG] Nouveau chat créé, ID:', responseData.chatResponse.id);
+        console.log(
+          "[DEBUG] Nouveau chat créé, ID:",
+          responseData.chatResponse.id
+        );
         setActiveChatId(responseData.chatResponse.id);
-        socketRef.current?.emit('joinChat', responseData.chatResponse.id);
-        console.log('[DEBUG] Rejoint le chat via WebSocket:', responseData.chatResponse.id);
+        socketRef.current?.emit("joinChat", responseData.chatResponse.id);
+        console.log(
+          "[DEBUG] Rejoint le chat via WebSocket:",
+          responseData.chatResponse.id
+        );
         // Mettre à jour les messages avec la réponse initiale
-        setMessages(responseData.chatResponse.messages.map((msg: any) => ({
-          id: msg.id,
-          content: msg.content,
-          sender: msg.sender,
-          timestamp: new Date(msg.createdAt),
-        })));
+        setMessages(
+          responseData.chatResponse.messages.map((msg: unknown) => {
+            const typedMsg = msg as Message;
+            return {
+              id: typedMsg.id,
+              content: typedMsg.content,
+              sender: typedMsg.sender,
+              timestamp: new Date(typedMsg.createdAt),
+            };
+          })
+        );
       }
 
       fetchUserChats();
       return responseData.chatResponse;
-
     } catch (error) {
-      console.error('[ERREUR] sendMessageToBackend:', error);
+      console.error("[ERREUR] sendMessageToBackend:", error);
       toast.error(
-        error instanceof Error ? error.message : "Erreur lors de l'envoi du message"
+        error instanceof Error
+          ? error.message
+          : "Erreur lors de l'envoi du message"
       );
       return null;
     }
@@ -370,18 +398,27 @@ const MainSession = ({
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.error('[ERREUR] fetchChatMessages échoué:', response.status, errorText);
+        console.error(
+          "[ERREUR] fetchChatMessages échoué:",
+          response.status,
+          errorText
+        );
         throw new Error("Erreur lors de la récupération des messages");
       }
 
       const chat = await response.json();
-      console.log('[DEBUG] Chat récupéré via fetchChatMessages :', chat);
-      setMessages(chat.messages.map((msg: any) => ({
-        id: msg.id,
-        content: msg.content,
-        sender: msg.sender,
-        timestamp: new Date(msg.createdAt),
-      })));
+      console.log("[DEBUG] Chat récupéré via fetchChatMessages :", chat);
+      setMessages(
+        chat.messages.map((msg: unknown) => {
+          const typedMsg = msg as Message;
+          return {
+            id: typedMsg.id,
+            content: typedMsg.content,
+            sender: typedMsg.sender,
+            timestamp: new Date(typedMsg.createdAt),
+          };
+        })
+      );
     } catch (error) {
       console.error("Erreur lors de la récupération des messages :", error);
       toast.error("Erreur lors de la récupération des messages");
@@ -389,11 +426,11 @@ const MainSession = ({
   };
 
   useEffect(() => {
-    console.log('[DEBUG] activeChatId changé :', activeChatId);
+    console.log("[DEBUG] activeChatId changé :", activeChatId);
     if (activeChatId) {
       fetchChatMessages(activeChatId);
-      socketRef.current?.emit('joinChat', activeChatId);
-      console.log('[DEBUG] Rejoint le chat:', activeChatId);
+      socketRef.current?.emit("joinChat", activeChatId);
+      console.log("[DEBUG] Rejoint le chat:", activeChatId);
     } else {
       setMessages([]);
     }
@@ -410,14 +447,14 @@ const MainSession = ({
       timestamp: new Date(),
     };
 
-    console.log('[DEBUG] Ajout message utilisateur :', userMessage);
+    console.log("[DEBUG] Ajout message utilisateur :", userMessage);
     setMessages((prev) => [...prev, userMessage]);
     setInputValue("");
     setIsAiTyping(true);
 
     const typingTimeout = setTimeout(() => {
       setIsAiTyping(false);
-      toast.error('Aucune réponse reçue du serveur après 30 secondes');
+      toast.error("Aucune réponse reçue du serveur après 30 secondes");
     }, 30000);
 
     try {
@@ -426,7 +463,7 @@ const MainSession = ({
         clearTimeout(typingTimeout);
       }
     } catch (error) {
-      console.error('[ERREUR] handleSendMessage :', error);
+      console.error("[ERREUR] handleSendMessage :", error);
       toast.error("Erreur de communication avec le serveur");
       clearTimeout(typingTimeout);
       setIsAiTyping(false);
@@ -455,15 +492,17 @@ const MainSession = ({
         <h1 className="righteous text-xl font-semibold text-gray-800">
           Perfect Research
         </h1>
-        
+
         <div className="relative">
-          <button 
+          <button
+            type="button"
             onClick={() => setIsProfileOpen(!isProfileOpen)}
             className="p-2 rounded-full hover:bg-gray-100"
+            aria-label="Ouvrir le menu profil"
           >
             <CircleUserRound className="text-gray-700" size={25} />
           </button>
-          
+
           <ProfilDropdown
             isProfileOpen={isProfileOpen}
             setIsProfileOpen={setIsProfileOpen}
@@ -487,7 +526,7 @@ const MainSession = ({
                 Salut, je suis Perfect Chat
               </h2>
               <p className="text-gray-600">
-                Comment puis-je vous aider aujourd'hui ? <br />
+                Comment puis-je vous aider aujourd&apos;hui ? <br />
                 Posez-moi une question sur votre recherche ou mémoire.
               </p>
             </div>
@@ -495,7 +534,7 @@ const MainSession = ({
         ) : (
           <div className="space-y-6 pt-4 pb-20">
             {messages.map((message) => {
-              console.log('[DEBUG] Rendu message :', message);
+              console.log("[DEBUG] Rendu message :", message);
               return (
                 <div
                   key={message.id}
@@ -511,7 +550,10 @@ const MainSession = ({
                     }`}
                   >
                     <p className="whitespace-pre-wrap">
-                      {message.content || (message.sender === 'RAG' && isAiTyping ? 'En cours de génération...' : 'Aucune réponse')}
+                      {message.content ||
+                        (message.sender === "RAG" && isAiTyping
+                          ? "En cours de génération..."
+                          : "Aucune réponse")}
                     </p>
                     <div className="text-xs mt-1 opacity-70 text-right">
                       {new Date(message.timestamp).toLocaleTimeString([], {
@@ -523,7 +565,7 @@ const MainSession = ({
                 </div>
               );
             })}
-            
+
             {isAiTyping && (
               <div className="flex justify-start">
                 <div className="bg-gray-200 text-gray-800 rounded-2xl px-4 py-3 max-w-[200px]">
@@ -533,7 +575,7 @@ const MainSession = ({
                 </div>
               </div>
             )}
-            
+
             <div ref={messagesEndRef} />
           </div>
         )}

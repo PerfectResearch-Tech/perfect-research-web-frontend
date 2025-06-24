@@ -12,7 +12,7 @@ const HomeFooter = () => {
             Perfect Research
           </h1>
           <p className="text-justify text-sm mt-2 hover:text-[var(--secondary-color)] transition-colors duration-300 relative z-10 text-black">
-            Explorez l'univers de la connaissance avec nous. Lorem ipsum dolor
+            Explorez l&lsquo;univers de la connaissance avec nous. Lorem ipsum dolor
             sit amet consectetur adipisicing elit.
           </p>
           <span className="absolute top-0 left-0 w-2 h-2 bg-[var(--secondary-color)] rounded-full animate-orbit"></span>

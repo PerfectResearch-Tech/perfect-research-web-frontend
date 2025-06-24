@@ -1,33 +1,28 @@
 import Loading from "@/app/components/Loading/Loading";
 import { getApiUrl } from "@/app/lib/config";
 import Image from "next/image";
-import React, { use, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { toast, Toaster } from "sonner";
 
-const SytemYears = ({
-  id,
-  year,
-  fetchData,
-}: {
+interface SystemYearsProps {
   id: string;
-  year: string;
-  fetchData: any;
-}) => {
+  year: number;
+  fetchData: () => Promise<void>;
+}
+
+const SystemYears: React.FC<SystemYearsProps> = ({ id, year, fetchData }) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [newYear, setNewYear] = useState("");
+  const [newYear, setNewYear] = useState<string>(year.toString());
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [itemToEdit, setItemToEdit] = useState("");
   const [error, setError] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    setNewYear(year);
-    // console.log(year);
+    setNewYear(year.toString());
   }, [year]);
 
   // Ouvrir la modale d'édition
-  const openEditModal = (item: any) => {
-    setItemToEdit(item);
+  const openEditModal = () => {
     setIsEditModalOpen(true);
   };
 
@@ -44,30 +39,30 @@ const SytemYears = ({
     setIsLoading(true);
     const parsedYear = parseInt(newYear, 10);
 
-    const token = localStorage.getItem("accessToken");
-
-    if (!token) {
-      setError("Vous devez être connecté pour effectuer cette action.");
-      return;
-    }
-
-    if (!newYear) {
-      toast.error("Veuillez renseigner la nouvelle année.");
+    if (isNaN(parsedYear)) {
+      toast.error("Veuillez renseigner une année valide.");
       setIsLoading(false);
       return;
     }
 
-    // const apiUrl = `http://192.168.1.205:3001/admin/year/${id}`;
+    const token = localStorage.getItem("accessToken");
+
+    if (!token) {
+      setError("Vous devez être connecté pour effectuer cette action.");
+      setIsLoading(false);
+      return;
+    }
+
     const apiUrl = `${getApiUrl(`/admin/year/${id}`)}`;
 
     try {
       const response = await fetch(apiUrl, {
-        method: "PUT", // Ou "PATCH" si l'API accepte une mise à jour partielle
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ year: parsedYear }), // Envoie la nouvelle année dans le corps de la requête
+        body: JSON.stringify({ year: parsedYear }),
       });
 
       if (!response.ok) {
@@ -77,10 +72,7 @@ const SytemYears = ({
         );
       }
 
-      // console.log("Année modifiée avec succès !");
       toast.success("Année modifiée avec succès !");
-
-      // Réinitialiser l'état d'erreur après une modification réussie
       setError("");
     } catch (error) {
       console.error("Erreur lors de la modification :", error);
@@ -103,10 +95,10 @@ const SytemYears = ({
 
     if (!token) {
       setError("Vous devez être connecté pour effectuer cette action.");
+      setIsLoading(false);
       return;
     }
 
-    // const apiUrl = `http://192.168.1.205:3001/admin/year/${id}`;
     const apiUrl = `${getApiUrl("/admin/year")}/${id}`;
 
     try {
@@ -120,21 +112,16 @@ const SytemYears = ({
 
       if (!response.ok) {
         const errorData = await response.json();
-        toast.error("Une erreur est survenue lors de la suppression");
-
         throw new Error(
           errorData.message || "Erreur lors de la suppression de l'année"
         );
       }
 
-      // console.log("Année supprimée avec succès !");
       toast.success("Année supprimée avec succès !");
-
-      // Réinitialiser l'état d'erreur après une suppression réussie
       setError("");
-      toast.success("Année supprimée avec succès !");
     } catch (error) {
       console.error("Erreur lors de la suppression :", error);
+      toast.error("Une erreur est survenue lors de la suppression");
       setError(
         error instanceof Error
           ? error.message
@@ -154,111 +141,113 @@ const SytemYears = ({
         <Loading />
       ) : (
         <div>
-          {/* <br /> */}
           <Toaster richColors position="top-right" />
 
-          <div>
-            {/* Contenu principal */}
-            <div className="flex flex-row justify-between py-2">
-              {/* <p>{year}</p> */}
+          <div className="flex flex-row justify-between py-2">
+            <div className="flex flex-row gap-8">
+              <button
+                type="button"
+                onClick={openEditModal}
+                aria-label="Éditer l'année"
+              >
+                <Image
+                  src="/assets/icons/editer.png"
+                  alt="Éditer"
+                  height={20}
+                  width={20}
+                />
+              </button>
+              <button
+                type="button"
+                onClick={openDeleteModal}
+                aria-label="Supprimer l'année"
+              >
+                <Image
+                  src="/assets/icons/supprimer.png"
+                  alt="Supprimer"
+                  height={20}
+                  width={20}
+                />
+              </button>
+            </div>
+          </div>
 
-              <div className="flex flex-row gap-8">
-                <button onClick={() => openEditModal("2010")}>
-                  <Image
-                    src={"/assets/icons/editer.png"}
-                    alt="editer"
-                    height={20}
-                    width={20}
-                  />
-                </button>
-                <button onClick={openDeleteModal}>
-                  <Image
-                    src={"/assets/icons/supprimer.png"}
-                    alt="supprimer"
-                    height={20}
-                    width={20}
-                  />
-                </button>
+          {isEditModalOpen && (
+            <div
+              onClick={closeEditModal}
+              className="pointer-events-auto fixed inset-0 z-[999] grid h-screen w-screen place-items-center bg-black bg-opacity-60 opacity-100 backdrop-blur-sm transition-opacity duration-300"
+            >
+              <div
+                onClick={(e) => e.stopPropagation()}
+                className="relative m-4 p-4 w-2/5 min-w-[40%] max-w=[40%] rounded-lg bg-white shadow-sm"
+              >
+                <h3 className="text-xl font-medium text-slate-800 pb-4">
+                  Éditer l&lsquo;élément : {year}
+                </h3>
+                <input
+                  type="number"
+                  className="w-full p-4 border"
+                  placeholder="Modifier l'année"
+                  value={newYear}
+                  onChange={(e) => setNewYear(e.target.value)}
+                />
+                {error && <p className="text-red-500 text-center">{error}</p>}
+                <div className="flex shrink-0 flex-wrap items-center pt-4 justify-end">
+                  <button
+                    type="button"
+                    onClick={closeEditModal}
+                    className="rounded-md border border-transparent py-2 px-4 text-center text-sm transition-all text-slate-600 hover:bg-slate-100 focus:bg-slate-100 active:bg-slate-100"
+                  >
+                    Annuler
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleUpdateYear(id, newYear)}
+                    className="rounded-md btn btn-primary py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-green-700 focus:shadow-none active:bg-green-700"
+                  >
+                    Sauvegarder
+                  </button>
+                </div>
               </div>
             </div>
+          )}
 
-            {/* Modale d'édition */}
-            {isEditModalOpen && (
+          {isDeleteModalOpen && (
+            <div
+              onClick={closeDeleteModal}
+              className="pointer-events-auto fixed inset-0 z-[999] grid h-screen w-screen place-items-center bg-black bg-opacity-60 opacity-100 backdrop-blur-sm transition-opacity duration-300"
+            >
               <div
-                onClick={closeEditModal}
-                className="pointer-events-auto fixed inset-0 z-[999] grid h-screen w-screen place-items-center bg-black bg-opacity-60 opacity-100 backdrop-blur-sm transition-opacity duration-300"
+                onClick={(e) => e.stopPropagation()}
+                className="relative m-4 p-4 w-2/5 min-w-[40%] max-w=[40%] rounded-lg bg-white shadow-sm"
               >
-                <div
-                  onClick={(e) => e.stopPropagation()} // Pour éviter la fermeture en cliquant à l'intérieur
-                  className="relative m-4 p-4 w-2/5 min-w-[40%] max-w-[40%] rounded-lg bg-white shadow-sm"
-                >
-                  <h3 className="text-xl font-medium text-slate-800 pb-4">
-                    Éditer l'élément : {year}
-                  </h3>
-                  <input
-                    type="number"
-                    className="w-full p-4 border"
-                    placeholder={`Modifier ${itemToEdit}`}
-                    value={newYear}
-                    onChange={(e) => setNewYear(e.target.value)}
-                  />
-                  <div className="flex shrink-0 flex-wrap items-center pt-4 justify-end">
-                    <button
-                      onClick={closeEditModal}
-                      className="rounded-md border border-transparent py-2 px-4 text-center text-sm transition-all text-slate-600 hover:bg-slate-100 focus:bg-slate-100 active:bg-slate-100"
-                      type="button"
-                    >
-                      Annuler
-                    </button>
-                    <button
-                      onClick={() => handleUpdateYear(id, newYear)}
-                      className="rounded-md btn btn-primary py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-green-700 focus:shadow-none active:bg-green-700"
-                      type="button"
-                    >
-                      Sauvegarder
-                    </button>
-                  </div>
+                <h3 className="text-xl font-medium text-slate-800 pb-4">
+                  Êtes-vous sûr de vouloir supprimer cet élément ?
+                </h3>
+                {error && <p className="text-red-500 text-center">{error}</p>}
+                <div className="flex shrink-0 flex-wrap items-center pt-4 justify-end">
+                  <button
+                    type="button"
+                    onClick={closeDeleteModal}
+                    className="rounded-md border border-transparent py-2 px-4 text-center text-sm transition-all text-slate-600 hover:bg-slate-100 focus:bg-slate-100 active:bg-slate-100"
+                  >
+                    Annuler
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleDelete(id)}
+                    className="rounded-md bg-red-600 py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-red-700 focus:shadow-none active:bg-red-700"
+                  >
+                    Supprimer
+                  </button>
                 </div>
               </div>
-            )}
-
-            {/* Modale de suppression */}
-            {isDeleteModalOpen && (
-              <div
-                onClick={closeDeleteModal}
-                className="pointer-events-auto fixed inset-0 z-[999] grid h-screen w-screen place-items-center bg-black bg-opacity-60 opacity-100 backdrop-blur-sm transition-opacity duration-300"
-              >
-                <div
-                  onClick={(e) => e.stopPropagation()}
-                  className="relative m-4 p-4 w-2/5 min-w-[40%] max-w-[40%] rounded-lg bg-white shadow-sm"
-                >
-                  <h3 className="text-xl font-medium text-slate-800 pb-4">
-                    Êtes-vous sûr de vouloir supprimer cet élément ?
-                  </h3>
-                  <div className="flex shrink-0 flex-wrap items-center pt-4 justify-end">
-                    <button
-                      onClick={closeDeleteModal}
-                      className="rounded-md border border-transparent py-2 px-4 text-center text-sm transition-all text-slate-600 hover:bg-slate-100 focus:bg-slate-100 active:bg-slate-100"
-                      type="button"
-                    >
-                      Annuler
-                    </button>
-                    <button
-                      onClick={() => handleDelete(id)}
-                      className="rounded-md bg-red-600 py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-red-700 focus:shadow-none active:bg-red-700"
-                      type="button"
-                    >
-                      Supprimer
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       )}
     </div>
   );
 };
 
-export default SytemYears;
+export default SystemYears;

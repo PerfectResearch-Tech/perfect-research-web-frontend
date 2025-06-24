@@ -1,13 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  FaComment,
-  FaTimes,
-  FaEllipsisV,
-  FaSearch,
-  FaFileUpload,
-} from "react-icons/fa";
-import { useRouter } from "next/navigation";
+import { FaComment, FaTimes, FaEllipsisV } from "react-icons/fa"; // FaSearch et FaFileUpload supprimés
+// import { useRouter } from "next/navigation"; // supprimé car non utilisé
 import { toast, Toaster } from "sonner";
 import { getApiUrl } from "@/app/lib/config";
 import { Search, SquarePen } from "lucide-react";
@@ -37,7 +31,7 @@ const SideBar: React.FC<SideBarProps> = ({
   const [isMobile, setIsMobile] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [menuOpenChatId, setMenuOpenChatId] = useState<string | null>(null);
-  const router = useRouter();
+  // const router = useRouter(); // supprimé
 
   useEffect(() => {
     const handleResize = () => {
@@ -76,7 +70,7 @@ const SideBar: React.FC<SideBarProps> = ({
       });
       setSavedChats((prev) => prev.filter((chat) => chat.id !== chatId));
       toast.success("Chat supprimé");
-    } catch (error) {
+    } catch {
       toast.error("Échec de la suppression");
     } finally {
       setMenuOpenChatId(null);
@@ -108,8 +102,8 @@ const SideBar: React.FC<SideBarProps> = ({
   };
 
   const overlayVariants = {
-    open: { opacity: 1, pointerEvents: "auto" },
-    closed: { opacity: 0, pointerEvents: "none" },
+    open: { opacity: 1, pointerEvents: "auto" as const},
+    closed: { opacity: 0, pointerEvents: "none" as const},
   };
 
   return (
@@ -145,31 +139,35 @@ const SideBar: React.FC<SideBarProps> = ({
               <button
                 onClick={() => setIsSidebarOpen(false)}
                 className="p-2 rounded-full hover:bg-gray-100 text-gray-600 md:hidden"
+                aria-label="Fermer la barre latérale"
+                type="button"
               >
                 <FaTimes size={18} />
               </button>
             </div>
 
-<div className="p-4">
-  <div className="relative">
-    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-    <input
-      type="text"
-      value={searchQuery}
-      onChange={(e) => setSearchQuery(e.target.value)}
-      placeholder="Rechercher des chats..."
-      className="w-full pl-10 py-2 border rounded-md shadow-sm focus:outline-none focus:ring focus:ring-blue-200"
-    />
-  </div>
+            <div className="p-4">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Rechercher des chats..."
+                  className="w-full pl-10 py-2 border rounded-md shadow-sm focus:outline-none focus:ring focus:ring-blue-200"
+                  aria-label="Rechercher des chats"
+                />
+              </div>
 
-  <button
-    onClick={createNewChat}
-    className="flex items-center mt-4 gap-3 w-full p-3 text-black rounded-lg transition-all"
-  >
-    <SquarePen size={16} />
-    <span className="regular">Nouveau chat</span>
-  </button>
-</div>
+              <button
+                onClick={createNewChat}
+                className="flex items-center mt-4 gap-3 w-full p-3 text-black rounded-lg transition-all"
+                type="button"
+              >
+                <SquarePen size={16} />
+                <span className="regular">Nouveau chat</span>
+              </button>
+            </div>
 
             <div className="flex-1 overflow-y-auto px-2 pb-4">
               {Object.entries(groupChatsByDate()).map(
@@ -193,6 +191,7 @@ const SideBar: React.FC<SideBarProps> = ({
                                   ? "bg-blue-50 text-blue-600"
                                   : "hover:bg-gray-100"
                               }`}
+                              type="button"
                             >
                               <FaComment className="mr-3 flex-shrink-0" size={14} />
                               <span className="truncate">{chat.title}</span>
@@ -206,6 +205,8 @@ const SideBar: React.FC<SideBarProps> = ({
                                 );
                               }}
                               className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-gray-200"
+                              aria-label={`Options pour la conversation ${chat.title}`}
+                              type="button"
                             >
                               <FaEllipsisV size={14} />
                             </button>
@@ -215,6 +216,7 @@ const SideBar: React.FC<SideBarProps> = ({
                                 <button
                                   onClick={() => deleteChat(chat.id)}
                                   className="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-gray-50 w-full"
+                                  type="button"
                                 >
                                   Supprimer
                                 </button>
@@ -235,9 +237,10 @@ const SideBar: React.FC<SideBarProps> = ({
         <button
           onClick={() => setIsSidebarOpen(true)}
           className="fixed top-4 left-4 z-50 md:hidden bg-blue-600 text-white p-2 rounded-full shadow-lg"
+          aria-label="Ouvrir la barre latérale"
+          type="button"
         >
-          < RxHamburgerMenu size={20} />
-          
+          <RxHamburgerMenu size={20} />
         </button>
       )}
     </>

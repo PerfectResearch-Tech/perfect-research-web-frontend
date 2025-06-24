@@ -1,15 +1,15 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import "../../authentication.css";
 import PrimaryButton from "@/app/components/generals/buttons/PrimaryButton";
 import { useRouter } from "next/navigation";
-import Loading from "@/app/components/Loading/Loading";
+
 import { toast, Toaster } from "sonner";
 import ButtonLoading from "@/app/components/Loading/ButtonLoading";
 import { getApiUrl } from "@/app/lib/config";
-import { p } from "framer-motion/client";
+
 
 const Login = () => {
   const [password, setPassword] = useState<string>("");

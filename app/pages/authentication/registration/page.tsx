@@ -5,7 +5,6 @@ import React, { useEffect, useState } from "react";
 import "../authentication.css";
 import PrimaryButton from "@/app/components/generals/buttons/PrimaryButton";
 import { useRouter } from "next/navigation";
-import Loading from "@/app/components/Loading/Loading";
 import { toast, Toaster } from "sonner";
 import ButtonLoading from "@/app/components/Loading/ButtonLoading";
 import { getApiUrl } from "@/app/lib/config";
@@ -218,7 +217,7 @@ const Registration = () => {
                 className={`regular ${fieldErrors.username ? "text-red-500" : ""}`}
                 // className={`regular ${fieldErrors.email ? "text-red-500" : "text-black"}`}
               >
-                Nom d'utilisateur
+                Nom d&lsquo;utilisateur
               </label>
               <input
                 type="text"
