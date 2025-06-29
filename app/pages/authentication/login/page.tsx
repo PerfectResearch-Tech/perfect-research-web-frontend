@@ -202,10 +202,10 @@ const Login = () => {
             </p>
             <br />
 
-            <h3 className="text-gray-500">- OU -</h3>
+            {/* <h3 className="text-gray-500">- OU -</h3> */}
 
             <br />
-            <div>
+            {/* <div>
               <button className="w-full flex items-center justify-center gap-3 px-6 py-3 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 text-gray-700 font-medium">
                 <Image
                   src="/assets/images/png/google.png"
@@ -215,7 +215,7 @@ const Login = () => {
                 />
                 <span>Se connecter avec google</span>
               </button>
-            </div>
+            </div> */}
 
             <br />
             <br />

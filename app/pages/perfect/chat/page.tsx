@@ -3,36 +3,17 @@ import Loading from "@/app/components/Loading/Loading";
 import MainSession from "@/app/components/perfect/main/chat/MainSession";
 import SideBar from "@/app/components/perfect/sider/chat/SideBar";
 import { getApiUrl } from "@/app/lib/config";
-import { Message } from "@/app/types";
-// import type { Message, Chat } from "@/app/types";
-
+import { Message, Chat } from "@/app/types";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
-
-// type Message = {
-//   id: string;
-//   chatId: string;
-//   senderId: string;
-//   content: string;
-//   createdAt: Date;
-// };
-
-type Chat = {
-  id: string;
-  title: string;
-  lastMessage?: string;
-  updatedAt: string;
-  createdAt:Date
-};
 
 const Page = () => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   const [activeChatId, setActiveChatId] = useState<string | null>(null);
- const [messages, setMessages] = useState<Message[]>([]);
-const [chatList, setChatList] = useState<Chat[]>([]);
-
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [chatList, setChatList] = useState<Chat[]>([]);
   const [showProfilePopup, setShowProfilePopup] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
 
@@ -109,19 +90,26 @@ const [chatList, setChatList] = useState<Chat[]>([]);
         },
       });
 
-      if (!response.ok) throw new Error("Erreur lors de la récupération des messages");
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Erreur HTTP: ${response.status} - ${errorText}`);
+      }
 
       const messages: Message[] = await response.json();
       setMessages(messages);
     } catch (error) {
-      console.error("Erreur lors de la récupération des messages :", error);
-      toast.error("Erreur lors de la récupération des messages");
+      // console.error("Erreur lors de la récupération des messages :", error);
+      // toast.error("Erreur lors de la récupération des messages");
     }
   };
 
-  const handleSelectChat = (chatId: string) => {
+  const handleSelectChat = (chatId: string | null) => {
     setActiveChatId(chatId);
-    fetchChatMessages(chatId);
+    if (chatId) {
+      fetchChatMessages(chatId);
+    } else {
+      setMessages([]); // Réinitialiser les messages si aucun chat n’est sélectionné
+    }
   };
 
   const fetchUserChats = async () => {
@@ -138,15 +126,31 @@ const [chatList, setChatList] = useState<Chat[]>([]);
         },
       });
 
-      if (!response.ok) throw new Error("Erreur lors de la récupération des chats");
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Erreur HTTP: ${response.status} - ${errorText}`);
+      }
 
-      const chats: Chat[] = await response.json();
-      setChatList(chats);
+      const chats = await response.json();
+      const formattedChats: Chat[] = chats.map((chat: any) => ({
+        id: chat.id,
+        userId: chat.userId,
+        title: chat.title || `Chat ${chat.id}`,
+        lastMessage: chat.lastMessage,
+        createdAt: new Date(chat.createdAt).toISOString(),
+        updatedAt: chat.updatedAt ? new Date(chat.updatedAt).toISOString() : new Date(chat.createdAt).toISOString(),
+        messages: chat.messages || [],
+      }));
+      setChatList(formattedChats);
     } catch (error) {
       console.error("Erreur lors de la récupération des chats :", error);
       toast.error("Erreur lors de la récupération des chats");
     }
   };
+
+  useEffect(() => {
+    fetchUserChats();
+  }, []);
 
   if (isLoading) {
     return <Loading />;

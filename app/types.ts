@@ -32,15 +32,15 @@ export interface UserData {
   [key: string]: string | number | boolean | null | undefined;
 }
 
-// app/types.ts
+
 
 export type Message = {
   id: string;
   chatId: string | null;
   sender: "USER" | "RAG";
-  // champ manquant dans ta définition
   content: string;
-  createdAt: string; // ou timestamp selon ton API
+  createdAt: string;
+  updatedAt?: string; // Rendu facultatif
 };
 
 export type Chat = {

@@ -1,20 +1,25 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { FaComment, FaTimes, FaEllipsisV } from "react-icons/fa"; // FaSearch et FaFileUpload supprimés
-// import { useRouter } from "next/navigation"; // supprimé car non utilisé
+import { FaComment, FaTimes, FaEllipsisV } from "react-icons/fa";
 import { toast, Toaster } from "sonner";
 import { getApiUrl } from "@/app/lib/config";
 import { Search, SquarePen } from "lucide-react";
 import { RxHamburgerMenu } from "react-icons/rx";
+import { Chat } from "@/app/types";
+// import "../../../../../app/pages/authentication/authentication.css";
+import"../../../../globals.css";
 
-interface Chat {
+
+// Type pour la réponse de l'API POST /chats
+interface ChatResponse {
   id: string;
   title: string;
-  createdAt: Date;
+  createdAt: string;
+  updatedAt: string;
 }
 
 interface SideBarProps {
-  onSelectChat: (chatId: string) => void;
+  onSelectChat: (chatId: string |null) => void;
   onNewChat: () => void;
   activeChatId: string | null;
   chatList: Chat[];
@@ -31,7 +36,6 @@ const SideBar: React.FC<SideBarProps> = ({
   const [isMobile, setIsMobile] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [menuOpenChatId, setMenuOpenChatId] = useState<string | null>(null);
-  // const router = useRouter(); // supprimé
 
   useEffect(() => {
     const handleResize = () => {
@@ -48,30 +52,76 @@ const SideBar: React.FC<SideBarProps> = ({
     setSavedChats(chatList);
   }, [chatList]);
 
-  const createNewChat = () => {
-    const newChat = {
-      id: Date.now().toString(),
-      title: "Nouvelle conversation",
-      createdAt: new Date(),
-    };
-    setSavedChats((prev) => [newChat, ...prev]);
-    onSelectChat(newChat.id);
-    onNewChat();
-    toast.success("Nouveau chat créé");
+  const createNewChat = async () => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      const userId = localStorage.getItem("user");
+      if (!token || !userId) throw new Error("Non authentifié");
+
+      const response = await fetch(getApiUrl("/chats"), {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId,
+          question: "Nouvelle conversation",
+          companyId: "cmbjatwo90000k8hk297pykwi", // Remplace par companyId dynamique si possible
+        }),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Erreur HTTP: ${response.status} - ${errorText}`);
+      }
+
+      const { chatResponse }: { chatResponse: ChatResponse } = await response.json();
+      console.log("[DEBUG] Nouveau chat créé:", chatResponse);
+
+      setSavedChats((prev) => [
+        {
+          id: chatResponse.id,
+          title: chatResponse.title,
+          createdAt: chatResponse.createdAt, // Chaîne ISO, pas besoin de new Date
+          updatedAt: chatResponse.updatedAt || chatResponse.createdAt, // Fallback si updatedAt est absent
+        },
+        ...prev,
+      ]);
+      onSelectChat(chatResponse.id);
+      onNewChat();
+      toast.success("Nouveau chat créé");
+    } catch (error) {
+      console.error("[ERREUR] createNewChat:", error);
+      toast.error(
+        error instanceof Error ? error.message : "Échec de la création du chat"
+      );
+    }
   };
 
   const deleteChat = async (chatId: string) => {
     try {
       const token = localStorage.getItem("accessToken");
       if (!token) throw new Error("Non authentifié");
-      await fetch(`${getApiUrl(`/chats/${chatId}`)}`, {
+
+      const response = await fetch(getApiUrl(`/chats/${chatId}`), {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Erreur HTTP: ${response.status} - ${errorText}`);
+      }
+
       setSavedChats((prev) => prev.filter((chat) => chat.id !== chatId));
+      if (activeChatId === chatId) onSelectChat(null);
       toast.success("Chat supprimé");
-    } catch {
-      toast.error("Échec de la suppression");
+    } catch (error) {
+      console.error("[ERREUR] deleteChat:", error);
+      toast.error(
+        error instanceof Error ? error.message : "Échec de la suppression"
+      );
     } finally {
       setMenuOpenChatId(null);
     }
@@ -102,8 +152,8 @@ const SideBar: React.FC<SideBarProps> = ({
   };
 
   const overlayVariants = {
-    open: { opacity: 1, pointerEvents: "auto" as const},
-    closed: { opacity: 0, pointerEvents: "none" as const},
+    open: { opacity: 1, pointerEvents: "auto" as const },
+    closed: { opacity: 0, pointerEvents: "none" as const },
   };
 
   return (
@@ -135,7 +185,7 @@ const SideBar: React.FC<SideBarProps> = ({
             className="fixed md:relative z-50 h-screen w-72 bg-white shadow-xl flex flex-col border-r border-gray-200"
           >
             <div className="p-4 border-b border-gray-200 flex justify-between items-center">
-              <h1 className="text-xl font-bold text-gray-800">Perfect Chat</h1>
+              {/* <h1 className="text-xl font-bold text-gray-800">Perfect Chat</h1> */}
               <button
                 onClick={() => setIsSidebarOpen(false)}
                 className="p-2 rounded-full hover:bg-gray-100 text-gray-600 md:hidden"
@@ -165,7 +215,7 @@ const SideBar: React.FC<SideBarProps> = ({
                 type="button"
               >
                 <SquarePen size={16} />
-                <span className="regular">Nouveau chat</span>
+                <span className="bold">Nouveau chat</span>
               </button>
             </div>
 
@@ -174,7 +224,7 @@ const SideBar: React.FC<SideBarProps> = ({
                 ([date, chats]) =>
                   chats.length > 0 && (
                     <div key={date} className="mb-6">
-                      <h3 className="text-xs font-semibold text-gray-500 uppercase px-3 mb-2">
+                      <h3 className="text-xs font-secondary text-gray-500 uppercase px-3 mb-2">
                         {date === "today"
                           ? "Aujourd'hui"
                           : date === "yesterday"
@@ -193,8 +243,8 @@ const SideBar: React.FC<SideBarProps> = ({
                               }`}
                               type="button"
                             >
-                              <FaComment className="mr-3 flex-shrink-0" size={14} />
-                              <span className="truncate">{chat.title}</span>
+                              <FaComment className="mr-3 flex-shrink-0 " size={14} />
+                              <span className="truncate regular">{chat.title}</span>
                             </button>
 
                             <button
