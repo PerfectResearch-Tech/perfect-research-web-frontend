@@ -1,8 +1,13 @@
-
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { FaComment, FaPaperPlane, FaMicrophone, FaGlobe, FaCopy } from "react-icons/fa";
+import {
+  FaComment,
+  FaPaperPlane,
+  FaMicrophone,
+  FaGlobe,
+  FaCopy,
+} from "react-icons/fa";
 import { toast } from "sonner";
 import { CircleUserRound, Copy } from "lucide-react";
 import { getApiUrl } from "@/app/lib/config";
@@ -857,9 +862,7 @@ const MainSession = ({
               />
             </svg>
           </button>
-          <h4 className="font-tertiary text-xl  text-gray-800">
-            Perfect Chat
-          </h4>
+          <h4 className="font-tertiary text-xl  text-gray-800">Perfect Chat</h4>
         </div>
 
         <div className="relative">
@@ -899,49 +902,51 @@ const MainSession = ({
                 Posez-moi une question sur votre recherche ou mémoire.
               </p>
             </div>
-            </div>
-          ) : (
-            <div className="space-y-6 pt-4 pb-20">
-              {messages.map((message) => {
-                console.log("[DEBUG] Rendu message :", message);
-                return (
+          </div>
+        ) : (
+          <div className="space-y-6 pt-4 pb-20">
+            {messages.map((message) => {
+              console.log("[DEBUG] Rendu message :", message);
+              return (
+                <div
+                  key={message.id}
+                  className={`flex ${
+                    message.sender === "USER" ? "justify-end" : "justify-start"
+                  }`}
+                >
                   <div
-                    key={message.id}
-                    className={`flex ${
-                      message.sender === "USER" ? "justify-end" : "justify-start"
+                    className={`relative max-w-[70%] rounded-2xl px-4 py-3 ${
+                      message.sender === "USER" ? "bg-blue-100 text-black " : ""
                     }`}
                   >
-                    <div
-                      className={`relative max-w-[70%] rounded-2xl px-4 py-3 ${
-                        message.sender === "USER"
-                          ? "bg-blue-100 text-black "
-                          : ""
-                      }`}
-                    >
+                    
                       <ReactMarkdown
                         remarkPlugins={[remarkGfm]}
                         rehypePlugins={[rehypeSanitize]}
                         components={{
                           h3: ({ node, ...props }) => (
-                            <h3 className="text-lg font-semibold mt-2 mb-1" {...props} />
+                            <h3
+                              className="text-lg font-semibold mt-2 mb-1"
+                              {...props}
+                            />
                           ),
                           strong: ({ node, ...props }) => (
-                            <strong className="font-bold" {...props} />
+                            <strong className="regular text-lg" {...props} />
                           ),
                           em: ({ node, ...props }) => (
                             <em className="italic" {...props} />
                           ),
                           ul: ({ node, ...props }) => (
-                            <ul className="list-disc pl-5 my-2" {...props} />
+                            <ul className="list-disc pl-5 my-2 black " {...props} />
                           ),
                           ol: ({ node, ...props }) => (
-                            <ol className="list-decimal pl-5 my-2" {...props} />
+                            <ol className="list-decimal pl-5 my-2 black " {...props} />
                           ),
                           li: ({ node, ...props }) => (
-                            <li className="my-1" {...props} />
+                            <li className="my-1 ligth text-xl ligth" {...props} />
                           ),
                           p: ({ node, ...props }) => (
-                            <p className="whitespace-pre-wrap" {...props} />
+                            <p className="whitespace-pre-wrap regular text-lg" {...props} />
                           ),
                         }}
                       >
@@ -950,40 +955,44 @@ const MainSession = ({
                             ? "En cours de génération..."
                             : "Aucune réponse")}
                       </ReactMarkdown>
-                      <div className="flex justify-between items-center mt-1">
-                        <button
-                          onClick={() => copyToClipboard(message.content)}
-                          className="text-gray-500 hover:text-gray-700 focus:outline-none"
-                          aria-label={`Copier le message: ${message.content.substring(0, 20)}...`}
-                          type="button"
-                        >
-                          <Copy size={16} />
-                        </button>
-                        <div className="text-xs opacity-50 text-right">
-                          {new Date(message.createdAt).toLocaleTimeString([], {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })}
-                        </div>
+                    
+                    <div className="flex justify-between items-center mt-1">
+                      <button
+                        onClick={() => copyToClipboard(message.content)}
+                        className="text-gray-500 hover:text-gray-700 focus:outline-none"
+                        aria-label={`Copier le message: ${message.content.substring(
+                          0,
+                          20
+                        )}...`}
+                        type="button"
+                      >
+                        <Copy size={16} />
+                      </button>
+                      <div className="text-xs opacity-50 text-right">
+                        {new Date(message.createdAt).toLocaleTimeString([], {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
                       </div>
                     </div>
                   </div>
-                );
-              })}
+                </div>
+              );
+            })}
 
-              {isAiTyping && (
-                <div className="flex justify-start">
-                  <div className="bg-gray-100 text-gray-800 rounded-lg px-4 py-3 max-w-[200px]">
-                    <div className="flex items-center space-x-2">
-                      <ChatLoading />
-                    </div>
+            {isAiTyping && (
+              <div className="flex justify-start">
+                <div className="bg-gray-100 text-gray-800 rounded-lg px-4 py-3 max-w-[200px]">
+                  <div className="flex items-center space-x-2">
+                    <ChatLoading />
                   </div>
                 </div>
-              )}
+              </div>
+            )}
 
-              <div ref={messagesEndRef} />
-            </div>
-          )}
+            <div ref={messagesEndRef} />
+          </div>
+        )}
       </div>
 
       <div className="p-4 border-t border-gray-200 bg-white">
