@@ -184,8 +184,8 @@ const SideBar: React.FC<SideBarProps> = ({
             transition={{ type: "spring", damping: 25 }}
             className="fixed md:relative z-50 h-screen w-72 bg-white shadow-xl flex flex-col border-r border-gray-200"
           >
-            <div className="p-4 border-b border-gray-200 flex justify-between items-center">
-              {/* <h1 className="text-xl font-bold text-gray-800">Perfect Chat</h1> */}
+            <div className="p-6   flex justify-between items-center">
+              <h1 className="text-xl font-bold text-gray-800 regular">Perfect Chat</h1>
               <button
                 onClick={() => setIsSidebarOpen(false)}
                 className="p-2 rounded-full hover:bg-gray-100 text-gray-600 md:hidden"
