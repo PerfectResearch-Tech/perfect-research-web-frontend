@@ -5,9 +5,13 @@ import Image from "next/image"; // Ajout de l'import Image
 const HomeAfterBanner = () => {
   return (
     <div className="bg-custom py-20 px-4 sm:px-8 md:px-16 bg-[url('/file2.svg')]">
-      <h1 className="text-white title text-center bold">Nos offres</h1>
+      <h1 className="text-white title text-center bold">
+        {" "}
+        On change la donne!
+      </h1>
       <p className="text-white ligth sub-title text-center">
-        Accompagner la recherche, stimuler l’innovation, valoriser la donnée
+        Nous démocratisons l'accès à la connaissance et à l’exploitation des
+        données en Afrique grâce à trois solutions innovantes
         <br />
       </p>
 
@@ -37,14 +41,15 @@ const HomeAfterBanner = () => {
             </div>
             <div>
               <p className="ligth text-lg text-white">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Illo,
-                eos!
+                Un assistant intelligent, basé sur une technologie avancée d'IA,
+                nourri par des milliers de travaux universitaires et
+                scientifiques africains.
               </p>
             </div>
           </div>
         </Link>
 
-        <Link href={"/pages/perfect/research"}>
+        <Link href={""}>
           <div className="card">
             <div className="flex justify-center">
               <Image
@@ -56,7 +61,7 @@ const HomeAfterBanner = () => {
             </div>
             <br />
             <div className="flex flex-row justify-between">
-              <h3 className="text-white bold">Perfect Research</h3>
+              <h3 className="text-white bold">PerfectChat Pro</h3>
               <Image
                 src="/assets/images/png/home-right-arrow.png"
                 alt="arrow"
@@ -66,14 +71,15 @@ const HomeAfterBanner = () => {
             </div>
             <div>
               <p className="ligth text-lg text-white">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Illo,
-                eos!
+                Dédié aux entreprises, il leur permet d'extraire de la valeur de
+                leurs propres données clients. Grâce à l’IA les entreprises
+                optimisent leurs processus.
               </p>
             </div>
           </div>
         </Link>
 
-        <Link href={"/pages/perfect/research"}>
+        <Link href={""}>
           <div className="card">
             <div className="flex justify-center">
               <Image
@@ -85,7 +91,7 @@ const HomeAfterBanner = () => {
             </div>
             <br />
             <div className="flex flex-row justify-between">
-              <h3 className="text-white bold">Perfect Research</h3>
+              <h3 className="text-white bold">PerfectChat API </h3>
               <Image
                 src="/assets/images/png/home-right-arrow.png"
                 alt="arrow"
@@ -95,8 +101,7 @@ const HomeAfterBanner = () => {
             </div>
             <div>
               <p className="ligth text-lg text-white">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Illo,
-                eos!
+                Une plateforme flexible que les startups peuvent intégrer facilement à leurs applications pour analyser, exploiter et valoriser leurs propres données.
               </p>
             </div>
           </div>

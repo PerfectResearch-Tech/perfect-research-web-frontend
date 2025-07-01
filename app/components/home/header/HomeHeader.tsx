@@ -27,14 +27,21 @@ function HomeHeader() {
         </div>
 
         <ul className="flex flex-row items-center home-menu-center-items px-4 py-3">
-          <li className="mx-4">
+          {/* <li className="mx-4">
             <Link href="/pages/perfect/chat">
               <span className="bold">Perfect Chat</span>
             </Link>
+          </li> */}
+
+          <li className="mx-4 my-2 ">
+            <Link href="https://docs.perfectresearch.app/">
+              <span>Documentation</span>
+            </Link>
           </li>
+
           <li className="mx-4">
-            <Link href="/pages/perfect/research">
-              <span className="bold">Perfect Research</span>
+            <Link href="">
+              <span className="bold">Tarifications</span>
             </Link>
           </li>
           <li className="mx-4">
@@ -44,9 +51,9 @@ function HomeHeader() {
           </li>
         </ul>
 
-        <Link href="/pages/perfect/chat">
+        <Link href="/pages/authentication/registration">
           <span className="btn btn-primary text-lg bold uppercase">
-            Faire une demo
+          Inscription
           </span>
         </Link>
       </div>
@@ -94,9 +101,15 @@ function HomeHeader() {
       {/* Menu déroulant mobile */}
       {isMobileMenuOpen && (
         <ul className="md:hidden flex flex-col items-center home-menu-center-items px-4 py-3 absolute top-16 left-0 w-full bg-white z-10">
-          <li className="mx-4 my-2">
+          {/* <li className="mx-4 my-2">
             <Link href="/pages/perfect/chat">
               <span>Perfect Chat</span>
+            </Link>
+          </li> */}
+
+          <li className="mx-4 my-2">
+            <Link href="https://docs.perfectresearch.app/">
+              <span>Documentation</span>
             </Link>
           </li>
           <li className="mx-4 my-2">

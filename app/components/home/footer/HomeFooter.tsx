@@ -34,7 +34,7 @@ const HomeFooter = () => {
               href="#Nos offres"
               className="block text-sm hover:text-[var(--secondary-color)] transition-all duration-300 transform hover:translate-x-2 text-black"
             >
-              Nos offres
+            On change la donne!
             </Link>
             {/* <Link
               href="#contact"

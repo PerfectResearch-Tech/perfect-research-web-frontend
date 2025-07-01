@@ -3,12 +3,11 @@ import HomeHeader from "../header/HomeHeader";
 import Link from "next/link";
 import Image from "next/image";
 
-
 const HomeBanner = () => {
   return (
     <section className="relative min-h-screen overflow-hidden">
       {/* Ici on met BackgroundLines en fond */}
-  
+
       <div className="absolute inset-0 h-full w-full bg-hero-background bg-[linear-gradient(to_right,#80808012_1px,transparent_5px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,#000_60%,transparent_100%)]"></div>
       <div className="absolute inset-0 h-full w-full bg-hero-background bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,#000_60%,transparent_100%)]"></div>
 
@@ -38,16 +37,16 @@ const HomeBanner = () => {
                 </button>
               </Link>
 
-              <Link href="pages/perfect/research">
+              <a href="mailto:perfectresearch@justeinnover.com">
                 <button className="btn btn-secondary text-lg uppercase">
-                  Chercher un document
+                  Parler à un expert
                 </button>
-              </Link>
+              </a>
             </div>
 
             <div className="flex justify-center mt-10 animate-fade-in delay-300">
               <Image
-                src="/assets/images/png/hero-mockup.webp"
+                src="/assets/images/png/hero-mockup.png"
                 alt="Logo"
                 width={384}
                 height={384}
