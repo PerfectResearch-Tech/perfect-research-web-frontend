@@ -9,6 +9,6 @@ heading: "Rejoignez plus de 1 Million d'utilisateurs pour transformer vos Recher
 
 
     subheading: 'Téléchargez notre plateforme dès aujourd’hui et franchissez la première étape vers une recherche plus rapide, plus intelligente et plus collaborative.',
-    // appStoreUrl: '#',
+    appStoreUrl: '#',
     // googlePlayUrl: '#'
 }

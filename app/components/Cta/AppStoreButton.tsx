@@ -1,9 +1,13 @@
 import React from 'react'
-import clsx from 'clsx'
+// import clsx from 'clsx'
 
 import { ctaDetails } from '@/app/data/cta'
 
 const AppStoreButton = ({ dark }: { dark?: boolean }) => {
+    function clsx(arg0: string, arg1: { "text-white bg-foreground": boolean | undefined; "text-foreground bg-white": boolean }): string | undefined {
+        throw new Error('Function not implemented.')
+    }
+
     return (
         <a href={ctaDetails.appStoreUrl}>
             <button
