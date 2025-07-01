@@ -34,8 +34,20 @@ const HomeFooter = () => {
               href="#Nos offres"
               className="block text-sm hover:text-[var(--secondary-color)] transition-all duration-300 transform hover:translate-x-2 text-black"
             >
-            On change la donne!
+            Documentation
             </Link>
+            <Link
+              href="#Nos offres"
+              className="block text-sm hover:text-[var(--secondary-color)] transition-all duration-300 transform hover:translate-x-2 text-black"
+            >
+            Tarification
+            </Link>
+            {/* <Link
+              href="#Nos offres"
+              className="block text-sm hover:text-[var(--secondary-color)] transition-all duration-300 transform hover:translate-x-2 text-black"
+            >
+            Documentation
+            </Link> */}
             {/* <Link
               href="#contact"
               className="block text-sm hover:text-[var(--secondary-color)] transition-all duration-300 transform hover:translate-x-2"
@@ -64,10 +76,17 @@ const HomeFooter = () => {
               Perfect Chat
             </Link>
             <Link
-              href="/pages/perfect/research"
+              href=""
               className="block text-sm hover:text-[var(--secondary-color)] transition-all duration-300 transform hover:translate-x-2 text-black"
             >
-              Perfect Research
+              PerfectChat Pro
+            </Link>
+
+            <Link
+              href=""
+              className="block text-sm hover:text-[var(--secondary-color)] transition-all duration-300 transform hover:translate-x-2 text-black"
+            >
+              PerfectChat Api
             </Link>
           </nav>
 

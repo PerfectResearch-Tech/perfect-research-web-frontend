@@ -27,7 +27,7 @@ const HomeBanner = () => {
             </h1>
 
             <p className="regular md:text-4xl text-black opacity-90 typewriter">
-              L&apos;IA qui vous aide à rédiger vos thèses et vos mémoires
+             Démocratiser la connaissance et la donnée en Afrique.
             </p>
 
             <div className="flex flex-col sm:flex-row justify-center gap-4 mt-8 animate-fade-in delay-200">
