@@ -45,7 +45,7 @@ function HomeHeader() {
             </Link>
           </li>
           <li className="mx-4">
-            <Link href="#contact">
+            <Link href="#footer">
               <span className="bold">Contact</span>
             </Link>
           </li>

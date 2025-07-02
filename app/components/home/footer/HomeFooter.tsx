@@ -4,7 +4,10 @@ import { FaLinkedin, FaFacebook, FaTiktok } from "react-icons/fa";
 
 const HomeFooter = () => {
   return (
-    <footer   id="contact" className=" py-10 px-4 sm:px-8 md:px-16 transition-all duration-300 bg-white bg-[url('/file2.svg')] ">
+    <footer
+      id="footer"
+      className=" py-10 px-4 sm:px-8 md:px-16 transition-all duration-300 bg-white bg-[url('/file2.svg')] "
+    >
       <div className="footer-items grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto text-gray-700  ">
         {/* Section Description */}
         <div className="relative p-4 rounded-lg border border-gray-700 hover:border-[var(--secondary-color)] transition-all duration-300 group">
@@ -12,15 +15,15 @@ const HomeFooter = () => {
             Perfect Research
           </h1>
           <p className="text-justify text-sm mt-2 hover:text-[var(--secondary-color)] transition-colors duration-300 relative z-10 text-black">
-            Explorez l&lsquo;univers de la connaissance avec nous. Lorem ipsum dolor
-            sit amet consectetur adipisicing elit.
+            Explorez l&lsquo;univers de la connaissance avec nous. Lorem ipsum
+            dolor sit amet consectetur adipisicing elit.
           </p>
           <span className="absolute top-0 left-0 w-2 h-2 bg-[var(--secondary-color)] rounded-full animate-orbit"></span>
         </div>
 
         {/* Section Menu */}
         <div className="justify-center p-4">
-          <h3 className="text-lg font-semibold hover:text-[var(--secondary-color)] transition-colors duration-300 border-b-2 border-transparent hover:border-[var(--secondary-color)] pb-1 text-black">
+          <h3 className="text-lg font-semibold hover:text-[var(--secondary-color)] transition-colors duration-300  pb-1 text-black">
             Menu
           </h3>
           <nav className="mt-4 space-y-3">
@@ -31,16 +34,16 @@ const HomeFooter = () => {
               Accueil
             </Link>
             <Link
-              href="#Nos offres"
+              href="https://docs.perfectresearch.app/"
               className="block text-sm hover:text-[var(--secondary-color)] transition-all duration-300 transform hover:translate-x-2 text-black"
             >
-            Documentation
+              Documentation
             </Link>
             <Link
-              href="#Nos offres"
+              href="#Acceuil"
               className="block text-sm hover:text-[var(--secondary-color)] transition-all duration-300 transform hover:translate-x-2 text-black"
             >
-            Tarification
+              Tarification
             </Link>
             {/* <Link
               href="#Nos offres"
@@ -65,7 +68,7 @@ const HomeFooter = () => {
 
         {/* Section Produits et Réseaux Sociaux */}
         <div className="p-4">
-          <h3 className="text-lg font-semibold hover:text-[var(--secondary-color)] transition-colors duration-300 border-b-2 border-transparent hover:border-[var(--secondary-color)] pb-1 text-black">
+          <h3 className="text-lg font-semibold hover:text-[var(--secondary-color)] transition-colors duration-300  pb-1 text-black">
             Nos Offres
           </h3>
           <nav className="mt-4 space-y-3">
@@ -76,21 +79,21 @@ const HomeFooter = () => {
               Perfect Chat
             </Link>
             <Link
-              href=""
+              href="#service"
               className="block text-sm hover:text-[var(--secondary-color)] transition-all duration-300 transform hover:translate-x-2 text-black"
             >
               PerfectChat Pro
             </Link>
 
             <Link
-              href=""
+              href="#service"
               className="block text-sm hover:text-[var(--secondary-color)] transition-all duration-300 transform hover:translate-x-2 text-black"
             >
               PerfectChat Api
             </Link>
           </nav>
-
-          <h3 className="text-lg font-semibold hover:text-[var(--secondary-color)] transition-colors duration-300 mt-6 border-b-2 border-transparent hover:border-[var(--secondary-color)] pb-1 text-black">
+          {/* border-b-2 border-transparent hover:border-[var(--secondary-color)] ce proprieter mais un trait en bleux en bas de chaque Grand menu au cas où j'en aurais béssoin */}
+          <h3 className="text-lg font-semibold hover:text-[var(--secondary-color)] transition-colors duration-300 mt-6 pb-1 text-black">
             Réseaux Sociaux
           </h3>
           <ul className="flex flex-row gap-6 mt-4">

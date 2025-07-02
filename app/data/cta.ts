@@ -6,8 +6,8 @@ type CtaDetails = {
 };
 
 export const ctaDetails: CtaDetails = {
-  heading: "Rejoignez plus de 1 Million d'utilisateurs pour transformer vos Recherches",
-  subheading: 'Téléchargez notre plateforme dès aujourd’hui et franchissez la première étape vers une recherche plus rapide, plus intelligente et plus collaborative.',
+  heading: "Rejoignez-nous pour ouvrir l’accès à la connaissance et aux données.",
+  subheading: '',
   appStoreUrl: '#',
   googlePlayUrl: '#'
 };
