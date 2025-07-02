@@ -4,7 +4,7 @@ import Image from "next/image"; // Ajout de l'import Image
 
 const HomeAfterBanner = () => {
   return (
-    <div className="bg-custom py-20 px-4 sm:px-8 md:px-16 bg-[url('/file2.svg')]">
+    <div id="service" className="bg-custom py-20 px-4 sm:px-8 md:px-16 bg-[url('/file2.svg')]">
       <h1 className="text-white title text-center bold">
         {" "}
         On change la donne!
